@@ -1,7 +1,7 @@
 <script>
 import Vue from 'vue';
 
-import VueUtility from '@/library_vue/utility/index';
+import VueUtility from '@thzero/library_client_vue3/utility/index';
 
 import LibraryConstants from '@thzero/library_client/constants';
 

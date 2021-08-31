@@ -1,6 +1,6 @@
 <script>
 import GlobalUtility from '@thzero/library_client/utility/global';
-import VueUtility from '../../utility/index';
+import VueUtility from '@thzero/library_client_vue3/utility/index';
 
 import baseEdit from '../baseEdit';
 

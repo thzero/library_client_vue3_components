@@ -52,7 +52,7 @@ export default {
 			if (this.preCompleteOk) {
 				const response = await this.preCompleteOk(correlationId);
 				this.logger.debug('ConfirmationDialog', 'dialogOk', 'response', response, correlationId);
-				if (!response || !response.success) {
+				if (this.hasFailed(response)) {
 					this.handleError(response, correlationId);
 					return;
 				}

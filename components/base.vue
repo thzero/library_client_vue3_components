@@ -40,6 +40,12 @@ export default {
 		getDateHuman(date) {
 			return LibraryUtility.getDateHuman(date);
 		},
+		hasFailed(response) {
+			return Response.hasFailed(response) ;
+		},
+		hasSucceeded(response) {
+			return Response.hasSucceeded(response) ;
+		},
 		noBreakingSpaces() {
 			return '\xa0';
 		},

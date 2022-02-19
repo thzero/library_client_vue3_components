@@ -56,3 +56,9 @@ export default {
 	}
 };
 </script>
+
+<style scoped>
+	.opensource-padding {
+		padding-left: 16px
+	}
+</style>

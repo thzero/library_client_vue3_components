@@ -9,7 +9,7 @@ import Response from '@thzero/library_common/response';
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
 export default {
-	name: 'Base',
+	name: 'BaseComponent',
 	setup(props) {
 		// const correlationId = () => {
 		// 	return LibraryUtility.generateId();

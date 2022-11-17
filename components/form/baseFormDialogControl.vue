@@ -1,6 +1,5 @@
 <script>
 import GlobalUtility from '@thzero/library_client/utility/global';
-import VueUtility from '@thzero/library_client_vue3/utility/index';
 
 import baseEdit from '../baseEdit';
 
@@ -91,7 +90,7 @@ export default {
 	}),
 	computed: {
 		fullscreenInternal() {
-			return VueUtility.fullscreen(this.$vuetify);
+			return this.notImplementedError();
 		},
 		scrollableI() {
 			return this.scrollable ? 'scrollable' : '';

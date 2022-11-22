@@ -1,6 +1,5 @@
 <script>
 import { getCurrentInstance, computed, ref } from 'vue';
-import { useStore } from 'vuex';
 
 import LibraryConstants from '@thzero/library_client/constants';
 
@@ -19,15 +18,15 @@ export default {
 		const closeOnContentClick = ref(true);
 		const dialogSignOut = ref(new DialogSupport());
 
-		const store = useStore();
-
 		const instance = getCurrentInstance();
 
+		const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+
 		const isAuthCompleted = computed(() => {
-			return store.state.user && store.state.user.authCompleted;
+			return serviceStore.state.user.authCompleted;
 		});
 		const isLoggedIn = computed(() => {
-			return store.state.user && store.state.user.isLoggedIn;
+			return serviceStore.state.user.isLoggedIn;
 		});
 
 		const clickAbout = () => {

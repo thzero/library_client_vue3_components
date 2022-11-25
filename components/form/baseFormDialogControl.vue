@@ -85,8 +85,7 @@ export default {
 	data: () => ({
 		dialogHeightI: 300,
 		dialogDeleteConfirmSignal: new DialogSupport(),
-		dialogSignal: false,
-		disabled: false
+		dialogSignal: false
 	}),
 	computed: {
 		fullscreenInternal() {
@@ -113,24 +112,21 @@ export default {
 		this.onResize();
 	},
 	methods: {
-		clear(correlationId) {
-			this.serverErrors = [];
-			this.logger.debug('FormDialog', 'clear', 'clear', null, correlationId);
-			this.$nextTick(() => {
-				// this.$refs.obs.reset(correlationId);
-			});
-			this.disabled = false;
-		},
 		handleCancel() {
 			const correlationId = this.correlationId();
 			this.serverErrors = [];
 			this.dialogSignal = false;
-			this.clear(correlationId);
+			this.handleClear(correlationId);
 			this.logger.debug('FormDialog', 'cancel', 'cancel', null, correlationId);
 			this.$emit('cancel');
 		},
 		handleClear() {
-			this.clear(this.correlationId());
+			const correlationId = this.correlationId();
+			this.logger.debug('FormDialog', 'clear', 'clear', null, correlationId);
+			// this.$nextTick(() => {
+			// 	// this.$refs.obs.reset(correlationId);
+			// });
+			this.reset(correlationId, false);
 		},
 		async handleDelete() {
 			this.serverErrors = [];
@@ -162,14 +158,13 @@ export default {
 			this.dialogHeightI = Math.ceil(temp * this.scrollableAutoResizeFactor);
 		},
 		async reset(correlationId, value) {
+			await this.resetDialogI(correlationId, value);
+			this.serverErrors = [];
 			await this.validation.$validate();
-			const timer = setInterval(async () => {
-				clearInterval(timer);
-				const el = document.getElementsByClassName('v-card__text');
-				if (el && el.length > 0)
-					el[0].scrollTop = 0;
-			}, 25);
-			await this.resetDialog(correlationId, value);
+		},
+		async resetDialogI(correlationId, value) {
+			if (this.resetDialog)
+				this.resetDialog(correlationId, value);
 		},
 		// eslint-disable-next-line
 		// async resetDialog(correlationId, value) {
@@ -201,7 +196,7 @@ export default {
 			this.dialogSignal = false;
 			this.logger.debug('FormDialog', 'submit', 'ok', null, correlationId);
 			this.$emit('ok');
-			this.clear(correlationId);
+			this.handleClear(correlationId);
 
 			if (!String.isNullOrEmpty(response.route))
 				GlobalUtility.$navRouter.push(response.route);

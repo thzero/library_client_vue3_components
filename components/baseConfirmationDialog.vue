@@ -13,6 +13,10 @@ export default {
 			type: String,
 			default: null
 		},
+		messageRaw: {
+			type: Boolean,
+			default: false
+		},
 		nonRecoverable: {
 			type: Boolean,
 			default: false

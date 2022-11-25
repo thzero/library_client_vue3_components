@@ -78,6 +78,7 @@ export default {
 			default: '600px'
 		}
 	},
+	emits: ['cancel', 'close', 'ok', 'open'],
 	setup (props) {
 		return Object.assign(baseEdit.setup(props), {
 		});

@@ -13,21 +13,18 @@ export default {
 		}
 	},
 	setup(props) {
+		const hasCopyright = computed(() => {
+			return props.value.client && props.value.client.copyright && props.value.client.author;
+		});
+
 		const innerVersion = computed(() => {
 			return props.value;
 		});
 
 		return Object.assign(base.setup(props), {
+			hasCopyright,
 			innerVersion
 		});
 	}
-	// data () {
-	// 	return {};
-	// },
-	// computed: {
-	// 	innerVersion() {
-	// 		return this.value;
-	// 	}
-	// }
 };
 </script>

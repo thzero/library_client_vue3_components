@@ -8,6 +8,15 @@ export default {
 		vid: {
 			type: String,
 			default: ''
+		},
+		validation: {
+			type: Object,
+			default: null
+		},
+		// must be included in props
+		modelValue: {
+			type: null,
+			default: null
 		}
 	},
 	setup (props) {
@@ -18,6 +27,20 @@ export default {
 		innerValue: null,
 		watch: null
 	}),
+	computed: {
+		errorI() {
+			return this.validation ? this.validation[this.vid] ? this.validation[this.vid].$error : false : true;
+		},
+		errorsI() {
+			return this.validation ? this.validation[this.vid] ? this.validation[this.vid].$errors : [] : [];
+		}
+	},
+	watch: {
+		// Handles external model changes.
+		modelValue(newVal) {
+			this.initValue(newVal);
+		}
+	},
 	methods: {
 		initValue(value) {
 			this.innerValue = value;
@@ -25,9 +48,12 @@ export default {
 				return;
 
 			this.watch = this.$watch('innerValue', async (newVal) => {
-				this.$emit('input', newVal);
+				this.$emit('update:modelValue', newVal);
 			});
 		}
+	},
+	mounted() {
+		this.initValue(this.modelValue);
 	}
 };
 </script>

@@ -1,5 +1,6 @@
 <script>
 import { computed } from 'vue';
+
 import base from './base';
 export default {
 	name: 'BaseVersion',

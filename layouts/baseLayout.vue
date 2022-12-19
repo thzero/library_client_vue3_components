@@ -8,20 +8,15 @@ import base from '../components/base';
 export default {
 	name: 'BaseLayout',
 	extends: base,
-	setup() {
+	setup(props) {
 		const features = computed(() => {
 			return Constants.Features;
 		});
 
-		return Object.assign(base.setup(), {
+		return Object.assign(base.setup(props), {
 			features
 		});
 	}
-	// computed: {
-	// 	features() {
-	// 		return Constants.Features;
-	// 	}
-	// }
 };
 </script>
 

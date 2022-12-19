@@ -9,24 +9,23 @@ import baseLayout from './baseLayout';
 
 import DialogSupport from '@/library_vue/components/support/dialog';
 
-const auth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
-
 export default {
 	name: 'BaseMainLayout',
 	extends: baseLayout,
-	setup() {
+	setup(props) {
+		const instance = getCurrentInstance();
+
+		const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
+		const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+
 		const closeOnContentClick = ref(true);
 		const dialogSignOut = ref(new DialogSupport());
 
-		const instance = getCurrentInstance();
-
-		const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
-
 		const isAuthCompleted = computed(() => {
-			return serviceStore.state.user.authCompleted;
+			return instance.ctx.serviceStore.user != null ? instance.ctx.serviceStore.userAuthCompleted : false;
 		});
 		const isLoggedIn = computed(() => {
-			return serviceStore.state.user.isLoggedIn;
+			return instance.ctx.serviceStore.user != null ? instance.ctx.serviceStore.userAuthIsLoggedIn : false;
 		});
 
 		const clickAbout = () => {
@@ -39,66 +38,34 @@ export default {
 			GlobalUtility.$navRouter.push('/auth');
 		};
 		const clickSignOut = async () => {
-			dialogSignOut.value.ok();
-			await auth.signOut(instance.ctx.correlationId());
+			dialogSignOut.value.open();
 		};
 		const clickSupport = () => {
 			GlobalUtility.$navRouter.push('/support');
 		};
 		const dialogSignOutOk = async () => {
 			dialogSignOut.value.ok();
-			await auth.signOut(instance.ctx.correlationId());
+			await instance.ctx.serviceAuth.signOut(instance.ctx.correlationId());
 		};
 		const toggleDrawer = async () => {
 			GlobalUtility.$EventBus.emit('toggle-drawer');
 		};
 
-		return Object.assign(baseLayout.setup(), {
+		return Object.assign(baseLayout.setup(props), {
 			closeOnContentClick,
-			dialogSignOut,
-			isAuthCompleted,
-			isLoggedIn,
 			clickAbout,
 			clickOpenSource,
 			clickSignIn,
 			clickSignOut,
 			clickSupport,
+			dialogSignOut,
 			dialogSignOutOk,
+			isAuthCompleted,
+			isLoggedIn,
+			serviceAuth,
+			serviceStore,
 			toggleDrawer
 		});
 	}
-	// data: () => ({
-	// 	closeOnContentClick: true,
-	// 	dialogSignOut: new DialogSupport()
-	// }),
-	// computed: {
-	// 	isAuthCompleted() {
-	// 		return this.$store.state.user && this.$store.state.user.authCompleted;
-	// 	},
-	// 	isLoggedIn() {
-	// 		return this.$store.state.user && this.$store.state.user.isLoggedIn;
-	// 	}
-	// },
-	// methods: {
-	// 	clickAbout() {
-	// 		GlobalUtility.$navRouter.push('/about');
-	// 	},
-	// 	clickOpenSource() {
-	// 		GlobalUtility.$navRouter.push('/openSource');
-	// 	},
-	// 	async clickSignIn() {
-	// 		GlobalUtility.$navRouter.push('/auth');
-	// 	},
-	// 	clickSupport() {
-	// 		GlobalUtility.$navRouter.push('/support');
-	// 	},
-	// 	async dialogSignOutOk() {
-	// 		this.dialogSignOut.ok();
-	// 		await auth.signOut(this.correlationId());
-	// 	},
-	// 	toggleDrawer() {
-	// 		GlobalUtility.$EventBus.emit('toggle-drawer');
-	// 	}
-	// }
 };
 </script>

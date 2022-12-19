@@ -25,7 +25,7 @@ export default {
 			return props.value;
 		});
 		const display = computed(() => {
-			const correlationId = instance.correlationId();
+			const correlationId = instance.ctx.correlationId();
 			return serviceMarkup.trimResults(correlationId, serviceMarkup.render(correlationId, valueI));
 		});
 

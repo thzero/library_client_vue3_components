@@ -1,5 +1,5 @@
 <script>
-import Vue from 'vue';
+import { computed, getCurrentInstance, ref } from 'vue';
 
 import VueUtility from '@thzero/library_client_vue3/utility/index';
 
@@ -46,50 +46,98 @@ export default {
 		}
 	},
 	setup (props) {
-		return Object.assign(base.setup(props), {
+		const instance = getCurrentInstance();
+
+		const serviceMarkup = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
+
+		const dialogSignal = ref(false);
+		const internalItem = ref(null);
+
+		const description = computed(() => {
+			return instance.ctx.markup(instance.ctx.correlationId(), props.value);
 		});
-	},
-	data: () => ({
-		dialogSignal: false,
-		internalItem: null
-	}),
-	computed: {
-		description() {
-			return this.markup(this.correlationId(), this.value);
-		},
-		fullscreenInternal() {
+		const fullscreenInternal = computed(() => {
 			return VueUtility.fullscreen(this.$vuetify);
-		},
-		scrollableI() {
-			return this.scrollable ? 'scrollable' : '';
-		},
-		scrollableHeightI() {
-			return this.scrollableAutoResize ? 'height: ' + (!String.isNullOrEmpty(this.scrollableHeight) ? this.scrollableHeight : this.dialogHeightI) + 'px;' : '';
-		}
-	},
-	watch: {
-		// Handles external model changes.
-		signal(value) {
-			this.dialogSignal = value;
-		}
-	},
-	created() {
-		this._serviceMarkup = Vue.prototype.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
-	},
-	methods: {
-		dialogCancel() {
-			this.dialogSignal = false;
-			this.$emit('cancel');
-		},
-		async dialogOk() {
-			this.dialogSignal = false;
-			this.$emit('ok');
-		},
-		markup(correlationId, value) {
+		});
+		const scrollableI = computed(() => {
+			return scrollable.value ? 'scrollable' : '';
+		});
+		const scrollableHeightI = computed(() => {
+			return scrollableAutoResize.value ? 'height: ' + (!String.isNullOrEmpty(scrollableHeight.value) ? scrollableHeight.value : dialogHeightI.value) + 'px;' : '';
+		});
+
+		const dialogCancel = () => {
+			dialogSignal.value = false;
+			instance.ctx.$emit('cancel');
+		};
+		const dialogOk = async () => {
+			dialogSignal.value = false;
+			instance.ctx.$emit('ok');
+		};
+		const markup = (correlationId, value) => {
 			if (!value)
 				return null;
-			return this._serviceMarkup.trimResults(correlationId, this._serviceMarkup.render(correlationId, value));
-		}
-	}
+			return instance.ctx.serviceMarkup.trimResults(correlationId, instance.ctx.serviceMarkup.render(correlationId, value));
+		};
+
+		watch(signal, async (value) => {
+			dialogSignal.value = value;
+		});
+
+		return Object.assign(base.setup(props), {
+			description,
+			dialogCancel,
+			dialogOk,
+			dialogSignal,
+			fullscreenInternal,
+			internalItem,
+			markup,
+			serviceMarkup,
+			scrollableI,
+			scrollableHeightI
+		});
+	},
+	// data: () => ({
+	// 	dialogSignal: false,
+	// 	internalItem: null
+	// }),
+	// computed: {
+	// 	description() {
+	// 		return this.markup(this.correlationId(), this.value);
+	// 	},
+	// 	fullscreenInternal() {
+	// 		return VueUtility.fullscreen(this.$vuetify);
+	// 	},
+	// 	scrollableI() {
+	// 		return this.scrollable ? 'scrollable' : '';
+	// 	},
+	// 	scrollableHeightI() {
+	// 		return this.scrollableAutoResize ? 'height: ' + (!String.isNullOrEmpty(this.scrollableHeight) ? this.scrollableHeight : this.dialogHeightI) + 'px;' : '';
+	// 	}
+	// },
+	// watch: {
+	// 	// Handles external model changes.
+	// 	signal(value) {
+	// 		this.dialogSignal = value;
+	// 	}
+	// },
+	// created() {
+	// 	this._serviceMarkup = Vue.prototype.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
+	// },
+	// methods: {
+	// 	dialogCancel() {
+	// 		this.dialogSignal = false;
+	// 		this.$emit('cancel');
+	// 	},
+	// 	async dialogOk() {
+	// 		this.dialogSignal = false;
+	// 		this.$emit('ok');
+	// 	},
+	// 	markup(correlationId, value) {
+	// 		if (!value)
+	// 			return null;
+	// 		return this._serviceMarkup.trimResults(correlationId, this._serviceMarkup.render(correlationId, value));
+	// 	}
+	// }
 };
 </script>

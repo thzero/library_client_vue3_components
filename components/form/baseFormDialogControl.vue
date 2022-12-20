@@ -104,9 +104,9 @@ export default {
 		signal(value) {
 			const correlationId = this.correlationId();
 			this.$emit(value ? 'open' : 'close');
-			this.logger.debug('FormDialog', 'signal', 'value', value, correlationId);
+			this.logger.debug('BaseFormDialogControl', 'signal', 'value', value, correlationId);
 			this.dialogSignal = value;
-			this.logger.debug('FormDialog', 'signal', 'dialogSignal', this.dialogSignal, correlationId);
+			this.logger.debug('BaseFormDialogControl', 'signal', 'dialogSignal', this.dialogSignal, correlationId);
 		}
 	},
 	mounted() {
@@ -118,12 +118,12 @@ export default {
 			this.serverErrors = [];
 			this.dialogSignal = false;
 			this.handleClear(correlationId);
-			this.logger.debug('FormDialog', 'cancel', 'cancel', null, correlationId);
+			this.logger.debug('BaseFormDialogControl', 'cancel', 'cancel', null, correlationId);
 			this.$emit('cancel');
 		},
 		handleClear() {
 			const correlationId = this.correlationId();
-			this.logger.debug('FormDialog', 'clear', 'clear', null, correlationId);
+			this.logger.debug('BaseFormDialogControl', 'clear', 'clear', null, correlationId);
 			// this.$nextTick(() => {
 			// 	// this.$refs.obs.reset(correlationId);
 			// });
@@ -142,7 +142,7 @@ export default {
 
 			if (this.preCompleteDelete) {
 				const response = await this.preCompleteDelete(correlationId);
-				this.logger.debug('FormDialog', 'handleDeleteConfirmOk', 'response', response, correlationId);
+				this.logger.debug('BaseFormDialogControl', 'handleDeleteConfirmOk', 'response', response, correlationId);
 				if (this.hasFailed(response)) {
 					// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationId);
 					return;
@@ -150,7 +150,7 @@ export default {
 			}
 
 			this.dialogSignal = false;
-			this.logger.debug('FormDialog', 'handleDeleteConfirmOk', 'delete', null, correlationId);
+			this.logger.debug('BaseFormDialogControl', 'handleDeleteConfirmOk', 'delete', null, correlationId);
 			this.$emit('ok');
 			this.clear(correlationId);
 		},
@@ -174,33 +174,38 @@ export default {
 			// this.$refs.obs.setErrors(errors);
 		},
 		async submit() {
-			this.serverErrors = [];
+			try {
+				this.serverErrors = [];
 
-			const correlationId = this.correlationId();
+				const correlationId = this.correlationId();
 
-			// const result = await this.$refs.obs.validate(correlationId);
-			const result = await this.validation.$validate();
-			this.logger.debug('FormDialog', 'submit', 'result', result, correlationId);
-			if (!result)
-				return;
-
-			let response = { success: true, route: null };
-			if (this.preCompleteOk) {
-				response = await this.preCompleteOk(correlationId);
-				this.logger.debug('FormDialog', 'submit', 'response', response, correlationId);
-				if (this.hasFailed(response)) {
-					// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationId);
+				// const result = await this.$refs.obs.validate(correlationId);
+				const result = await this.validation.$validate();
+				this.logger.debug('BaseFormDialogControl', 'submit', 'result', result, correlationId);
+				if (!result)
 					return;
+
+				let response = { success: true, route: null };
+				if (this.preCompleteOk) {
+					response = await this.preCompleteOk(correlationId);
+					this.logger.debug('BaseFormDialogControl', 'submit', 'response', response, correlationId);
+					if (this.hasFailed(response)) {
+						// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationId);
+						return;
+					}
 				}
+
+				this.dialogSignal = false;
+				this.logger.debug('BaseFormDialogControl', 'submit', 'ok', null, correlationId);
+				this.$emit('ok');
+				this.handleClear(correlationId);
+
+				if (!String.isNullOrEmpty(response.route))
+					GlobalUtility.$navRouter.push(response.route);
 			}
-
-			this.dialogSignal = false;
-			this.logger.debug('FormDialog', 'submit', 'ok', null, correlationId);
-			this.$emit('ok');
-			this.handleClear(correlationId);
-
-			if (!String.isNullOrEmpty(response.route))
-				GlobalUtility.$navRouter.push(response.route);
+			catch (err) {
+				this._logger.exception('BaseFormDialogControl', 'submit', err, correlationId);
+			}
 		}
 	}
 };

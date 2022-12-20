@@ -1,5 +1,9 @@
 <script>
-import { computed, getCurrentInstance, onMounted, ref } from 'vue';
+import { getCurrentInstance, onMounted, ref } from 'vue';
+
+import LibraryConstants from '@thzero/library_client/constants';
+
+import GlobalUtility from '@thzero/library_client/utility/global';
 
 import base from './base';
 
@@ -7,41 +11,72 @@ export default {
 	name: 'BaseOpenSource',
 	extends: base,
 	setup(props) {
+		const instance = getCurrentInstance();
+
+		const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+
 		const data = ref('800px');
-		const dependenciesClient = ref( []);
-		const dependenciesServer = ref( []);
+		const dependenciesClient = ref([]);
+		const dependenciesServer = ref([]);
 
 		const initializeDependenciesClient = async () => {
 			return [];
 		};
-		const initializeDependenciesServer = async () => {
-			return [];
+		const initializeDependenciesClientBase = async () => {
+			const temp = await import('open-source-config');
+			const openSournce = temp.default();
+			let output = [];
+			let items;
+			for (const source of openSournce) {
+				items = source();
+				output = combineDependencies(output, items);
+			}
+			console.dir(output);	
+			return output;
+		};
+		const initializeDependenciesServerBase = async () => {
+			return [
+			];
 		};
 
-		// const dependenciesClient = computed(() => {
-		// 	return dependencies.value ? dependencies.value.filter(l => l.category === 'client').dependencies : [];
-		// });
-		// const dependenciesServer = computed(() => {
-		// 	return dependencies.value ? dependencies.value.filter(l => l.category === 'server').dependencies : [];
-		// });
 		const key = (index, prefix, secondary) => {
 				return prefix + '' + index + '' + secondary;
 		};
-		
-		const instance = getCurrentInstance();
+
+		const combineDependencies = (target, source) => {
+			let output = target !== null && Array.isArray(target) ? target : [];
+			
+			if (source && Array.isArray(source)) {
+				source.forEach(element => {
+					if (output.filter(l => l.name === element.name).length > 0)
+						return;
+					output.push(element);
+				});
+			}
+
+			output = output.sort((a, b) => a.name.localeCompare(b.name));
+			return output;
+		};
 
 		onMounted(async () => {
-			dependenciesClient.value = await instance.ctx.initializeDependenciesClient();
-			dependenciesServer.value = await instance.ctx.initializeDependenciesServer();
+			dependenciesClient.value = combineDependencies(
+				await instance.ctx.initializeDependenciesClient(), 
+				await instance.ctx.initializeDependenciesClientBase());
+			const response = await instance.ctx.serviceStore.dispatcher.requestOpenSource();
+			if (instance.ctx.hasFailed(response))
+				return;
+			dependenciesServer.value = response.results;
 		});
 
 		return Object.assign(base.setup(props), {
+			combineDependencies,
 			data,
 			dependenciesClient,
 			dependenciesServer,
 			initializeDependenciesClient,
-			initializeDependenciesServer,
-			key
+			initializeDependenciesClientBase,
+			key,
+			serviceStore
 		});
 	},
 	// data: () => ({

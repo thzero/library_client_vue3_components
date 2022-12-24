@@ -25,7 +25,7 @@ export default {
 		const instance = getCurrentInstance();
 
 		const serviceMarkup = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
-		
+
 		const markdownClass = computed(() => {
 			return 'markdown ' + (props.useGithub ? 'markdown-body' : '');
 		});
@@ -58,11 +58,9 @@ export default {
 </script>
 
 <style>
-	@import 'https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css'
-</style>
-<style>
+	@import 'https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css';
 	.markdown ol, ul, li {
 		margin: revert;
-		padding: revert; /* Padding is what gives the indentation */ 
-	} 
+		padding: revert; /* Padding is what gives the indentation */
+	}
 </style>

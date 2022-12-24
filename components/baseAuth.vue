@@ -20,11 +20,11 @@ export default {
 		const features = ref(serviceFeatures.features);
 		const isLoggedIn = ref(false);
 		const rememberMe = ref(false);
-		
+
 		const display = computed(() => {
 			return !isLoggedIn.value;
 		});
-		
+
 		const instance = getCurrentInstance();
 
 		const signInGoogle = async () => {
@@ -37,7 +37,7 @@ export default {
 		// 	if (authenticated.value)
 		// 		GlobalUtility.$navRouter.push('/');
 		// });
-		
+
 		onMounted(async () => {
 			await instance.ctx.serviceAuth.signInCompleted();
 			GlobalUtility.$EventBus.on('auth', isLoggedIn => {
@@ -62,9 +62,9 @@ export default {
 			isLoggedIn,
 			rememberMe,
 			serviceAuth,
-			signInGoogle,
+			signInGoogle
 		});
-	},
+	}
 	// data: () => ({
 	// 	allowRememberMe: false,
 	// 	authenticated: false,

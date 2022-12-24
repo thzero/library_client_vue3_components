@@ -120,7 +120,9 @@ export default {
 			await instance.ctx.handleClear(correlationId);
 		};
 		const reset = async (correlationId, value) => {
-			await instance.ctx.resetFormI(correlationId, value);
+			
+			if (instance.ctx.resetForm)
+				instance.ctx.resetForm(correlationId, value);
 			instance.ctx.logger.debug('VFormControl', 'clear', null, null, correlationId);
 			serverErrors.value = [];
 			await props.validation.$validate();
@@ -132,12 +134,6 @@ export default {
 			// 	if (el && el.length > 0)
 			// 		el[0].scrollTop = 0;
 			// }, 25);
-		};
-		const resetControl = (correlationId, value) => {
-		};
-		const resetFormI = async (correlationId, value) => {
-			if (instance.ctx.resetForm)
-				instance.ctx.resetForm(correlationId, value);
 		};
 		const setErrors = (errors) => {
 			serverErrors.value = errors !== null ? errors : [];
@@ -201,8 +197,6 @@ export default {
 			handleDelete,
 			handleDeleteConfirmOk,
 			reset,
-			resetControl,
-			resetFormI,
 			serverErrors,
 			setErrors,
 			submit,

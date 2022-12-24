@@ -28,11 +28,15 @@ export default {
 		const watchInner = ref(null);
 
 		const errorI = computed(() => {
-			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$error : false : true;
+			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors && (props.validation[props.vid].$silentErrors.length > 0) : false : true;
 		});
 
 		const errorsI = computed(() => {
-			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$errors : [] : [];
+			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors : [] : [];
+		});
+
+		const hideDetails = computed(() => {
+			return (!instance.ctx.errorsI || (instance.ctx.errorsI && instance.ctx.errorsI.length === 0));
 		});
 
 		const initValue = (value) => {
@@ -58,6 +62,7 @@ export default {
 		return Object.assign(baseEdit.setup(props), {
 			errorI,
 			errorsI,
+			hideDetails,
 			innerValue,
 			initValue,
 			watchInner

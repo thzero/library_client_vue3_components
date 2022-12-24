@@ -57,7 +57,7 @@ export default {
 			return instance.ctx.markup(instance.ctx.correlationId(), props.value);
 		});
 		const fullscreenInternal = computed(() => {
-			return VueUtility.fullscreen(this.$vuetify);
+			return VueUtility.fullscreen(instance.ctx.$vuetify);
 		});
 		const scrollableI = computed(() => {
 			return scrollable.value ? 'scrollable' : '';

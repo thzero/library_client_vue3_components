@@ -11,7 +11,12 @@ export default {
 	name: 'baseMarkdown',
 	extends: base,
 	props: {
-		value: {
+		useGithub: {
+			type: Boolean,
+			default: true
+		},
+		// must be included in props
+		modelValue: {
 			type: String,
 			default: ''
 		}
@@ -20,18 +25,24 @@ export default {
 		const instance = getCurrentInstance();
 
 		const serviceMarkup = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
-
-		const valueI = computed(() => {
-			return props.value;
+		
+		const markdownClass = computed(() => {
+			return 'markdown ' + (props.useGithub ? 'markdown-body' : '');
 		});
+
 		const display = computed(() => {
+			if (String.isNullOrEmpty(props.modelValue))
+				return '';
+
 			const correlationId = instance.ctx.correlationId();
-			return serviceMarkup.trimResults(correlationId, serviceMarkup.render(correlationId, valueI));
+			const results = serviceMarkup.render(correlationId, props.modelValue);
+			return serviceMarkup.trimResults(correlationId, results);
 		});
 
 		return Object.assign(base.setup(props), {
 			display,
-			valueI
+			markdownClass,
+			serviceMarkup
 		});
 	}
 	// computed: {
@@ -45,3 +56,13 @@ export default {
 	// }
 };
 </script>
+
+<style>
+	@import 'https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css'
+</style>
+<style>
+	.markdown ol, ul, li {
+		margin: revert;
+		padding: revert; /* Padding is what gives the indentation */ 
+	} 
+</style>

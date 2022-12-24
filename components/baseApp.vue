@@ -14,10 +14,10 @@ export default {
 		GlobalUtility.$EventBus.on('auth-refresh', async (user) => {
 			const correlationId = instance.ctx.correlationId();
 			instance.ctx.logger.debug('BaseApp', 'created', 'auth-refresh', user, correlationId);
-			const items = await instance.ctx.initialize(correlationId);
-			if (!items)
-				return;
-			await Promise.all(items);
+			// const items = await instance.ctx.initialize(correlationId);
+			// if (!items)
+			// 	return;
+			// await Promise.all(items);
 		});
 
 		onMounted(async () => {

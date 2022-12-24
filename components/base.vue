@@ -14,7 +14,7 @@ export default {
 	name: 'BaseComponent',
 	setup(props) {
 		const logger = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
-		
+
 		const serverErrors = ref([]);
 
 		const correlationId = () => {
@@ -66,7 +66,7 @@ export default {
 			serverErrors,
 			success
 		};
-	},
+	}
 	// data: () => ({
 	// 	logger: null,
 	// 	utility: null,

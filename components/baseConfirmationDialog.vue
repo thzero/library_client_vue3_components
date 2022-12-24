@@ -76,9 +76,9 @@ export default {
 			dialogOk,
 			dialogSignal,
 			handleError,
-			internalItem,
+			internalItem
 		});
-	},
+	}
 	// data: () => ({
 	// 	dialogSignal: false,
 	// 	internalItem: null

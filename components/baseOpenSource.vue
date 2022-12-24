@@ -33,7 +33,7 @@ export default {
 			}
 			return output;
 		};
-		const initializeDependenciesServerBase = async () => {
+		const initializeDependenciesClientFramework = async () => {
 			return [
 			];
 		};
@@ -44,7 +44,7 @@ export default {
 
 		const combineDependencies = (target, source, category) => {
 			let output = target !== null && Array.isArray(target) ? target : [];
-			
+
 			if (source && Array.isArray(source)) {
 				source.forEach(element => {
 					if (element.category !== category)
@@ -61,8 +61,12 @@ export default {
 
 		onMounted(async () => {
 			dependenciesClient.value = combineDependencies(
-				await instance.ctx.initializeDependenciesClient(), 
-				await instance.ctx.initializeDependenciesClientBase(), 'client');
+				await instance.ctx.initializeDependenciesClientBase(),
+				'client');
+			dependenciesClient.value = combineDependencies(
+				dependenciesClient.value,
+				await instance.ctx.initializeDependenciesClientFramework(),
+				'client');
 			const response = await instance.ctx.serviceStore.dispatcher.requestOpenSource();
 			if (instance.ctx.hasFailed(response))
 				return;
@@ -76,10 +80,11 @@ export default {
 			dependenciesServer,
 			initializeDependenciesClient,
 			initializeDependenciesClientBase,
+			initializeDependenciesClientFramework,
 			key,
 			serviceStore
 		});
-	},
+	}
 	// data: () => ({
 	// 	height: '800px',
 	// 	dependencies: [ {

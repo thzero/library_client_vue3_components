@@ -48,7 +48,7 @@ export default {
 				instance.ctx.$emit('update:modelValue', newVal);
 			});
 		};
-		
+
 		onMounted(async () => {
 			instance.ctx.initValue(props.modelValue);
 		});
@@ -67,7 +67,7 @@ export default {
 			initValue,
 			watchInner
 		});
-	},
+	}
 	// data: () => ({
 	// 	innerValue: null,
 	// 	watch: null

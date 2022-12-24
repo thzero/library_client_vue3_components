@@ -87,7 +87,7 @@ export default {
 		const dialogHeightI = ref(300);
 		const dialogDeleteConfirmSignal = ref(new DialogSupport());
 		const dialogSignal = ref(false);
-		const dirty = ref(false);;
+		const dirty = ref(false);
 		const loading = ref(false);
 		const invalid = ref(true);
 		const serverErrors = ref([]);
@@ -248,7 +248,7 @@ export default {
 			setErrors,
 			submit
 		});
-	},
+	}
 	// data: () => ({
 	// 	dialogHeightI: 300,
 	// 	dialogDeleteConfirmSignal: new DialogSupport(),

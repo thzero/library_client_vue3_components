@@ -35,7 +35,7 @@ export default {
 
 		return Object.assign(base.setup(props), {
 		});
-	},
+	}
 	// async created() { // TODO: to setup() https://javascript.plainenglish.io/differences-between-vue-2-and-vue-3-ee627e2c83a8
 	// 	GlobalUtility.$EventBus.on('auth-refresh', async (user) => {
 	// 		const correlationId = this.correlationId();

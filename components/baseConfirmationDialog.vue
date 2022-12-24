@@ -34,10 +34,10 @@ export default {
 	},
 	emits: ['cancel', 'ok'],
 	setup(props) {
+		const instance = getCurrentInstance();
+
 		const dialogSignal = ref(false);
 		const internalItem = ref(null);
-		
-		const instance = getCurrentInstance();
 
 		const dialogCancel = () => {
 			dialogSignal.value = false;

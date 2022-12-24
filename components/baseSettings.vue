@@ -65,14 +65,11 @@ export default {
 		const reset = (correlationId) => {
 			const self = instance.ctx;
 			setTimeout(() => {
-				self.resetI(correlationId);
+				instance.ctx.$refs.form.reset(correlationId);
 			},
 			150);
 		};
 		// eslint-disable-next-line
-		const resetI = (correlationId) => {
-			instance.ctx.$refs.form.reset(correlationId);
-		};
 
 		onMounted(async () => {
 			await instance.ctx.reset(instance.ctx.correlationId(), null);
@@ -96,7 +93,6 @@ export default {
 			preCompleteI,
 			requestReset,
 			reset,
-			resetI,
 			serviceStore,
 			serviceUsers,
 			snackbar,

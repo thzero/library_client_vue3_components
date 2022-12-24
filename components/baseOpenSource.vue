@@ -29,9 +29,8 @@ export default {
 			let items;
 			for (const source of openSournce) {
 				items = source();
-				output = combineDependencies(output, items);
+				output = combineDependencies(output, items, 'client');
 			}
-			console.dir(output);	
 			return output;
 		};
 		const initializeDependenciesServerBase = async () => {
@@ -43,11 +42,13 @@ export default {
 				return prefix + '' + index + '' + secondary;
 		};
 
-		const combineDependencies = (target, source) => {
+		const combineDependencies = (target, source, category) => {
 			let output = target !== null && Array.isArray(target) ? target : [];
 			
 			if (source && Array.isArray(source)) {
 				source.forEach(element => {
+					if (element.category !== category)
+						return;
 					if (output.filter(l => l.name === element.name).length > 0)
 						return;
 					output.push(element);
@@ -61,7 +62,7 @@ export default {
 		onMounted(async () => {
 			dependenciesClient.value = combineDependencies(
 				await instance.ctx.initializeDependenciesClient(), 
-				await instance.ctx.initializeDependenciesClientBase());
+				await instance.ctx.initializeDependenciesClientBase(), 'client');
 			const response = await instance.ctx.serviceStore.dispatcher.requestOpenSource();
 			if (instance.ctx.hasFailed(response))
 				return;

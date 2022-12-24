@@ -61,9 +61,10 @@ export default {
 	setup(props) {
 		const instance = getCurrentInstance();
 
-		const dialogLocationDeleteSignal = ref(new DialogSupport());
+		const dialogDeleteConfirmSignal = ref(new DialogSupport());
 		const dirty = ref(false);
 		const invalid = ref(true);
+		const isClearing = ref(false);
 		const isSaving = ref(false);
 		const serverErrors = ref([]);
 
@@ -72,16 +73,28 @@ export default {
 				return true;
 			return (invalid.value || props.disabled);
 		});
-		const overlaySave = computed(() => {
+		const isDeleting = computed(() => {
+			return dialogDeleteConfirmSignal.value.signal;
+		});
+		const isLoading = computed(() => {
+			return isClearing.value || instance.ctx.isDeleting || isSaving.value;
+		});
+		const overlayLoading = computed(() => {
 			return isSaving.value && props.autoSave;
 		});
 		
 		const handleClear = async (correlationId) => {
-			instance.ctx.logger.debug('VFormControl', 'clear', 'clear', null, correlationId);
-			// instance.ctx.$nextTick(() => {
-			// 	// instance.ctx.$refs.obs.reset(correlationId);
-			// });
-			await instance.ctx.reset(instance.ctx.correlationId(), false);
+			isClearing.value = true;
+			try {
+				instance.ctx.logger.debug('VFormControl', 'clear', 'clear', null, correlationId);
+				// instance.ctx.$nextTick(() => {
+				// 	// instance.ctx.$refs.obs.reset(correlationId);
+				// });
+				await instance.ctx.reset(instance.ctx.correlationId(), false);
+			}
+			finally {
+				isClearing.value = false;
+			}
 		};
 		const handleDelete = async () => {
 			serverErrors.value = [];
@@ -148,7 +161,6 @@ export default {
 					if (instance.ctx.hasFailed(response)) {
 						// TODO
 						// VueUtility.handleError(instance.ctx.$refs.obs, instance.ctx.serverErrors, response, correlationId);
-						isSaving.value = false;
 						return;
 					}
 				}
@@ -171,17 +183,20 @@ export default {
 				// console.log('v.errors: ' + JSON.stringify(value));
 				invalid.value = value.$invalid;
 				dirty.value = value.$anyDirty;
-				// console.log('v.invalid: ' + this.invalid);
+				// console.log('v.invalid: ' + invalid.value);
 			}
 		);
 
 		return Object.assign(baseEdit.setup(props), {
 			buttonOkDisabled,
-			dialogLocationDeleteSignal,
+			dialogDeleteConfirmSignal,
 			dirty,
 			invalid,
+			isClearing,
+			isDeleting,
+			isLoading,
 			isSaving,
-			overlaySave,
+			overlayLoading,
 			handleClear,
 			handleDelete,
 			handleDeleteConfirmOk,
@@ -194,7 +209,7 @@ export default {
 		});
 	},
 	// data: () => ({
-	// 	dialogLocationDeleteSignal: new DialogSupport(),
+	// 	dialogDeleteConfirmSignal: new DialogSupport(),
 	// 	disabled: false,
 	// 	internalItem: null,
 	// 	invalid: true,
@@ -211,7 +226,7 @@ export default {
 	// 	}
 	// },
 	// computed: {
-	// 	overlaySave() {
+	// 	overlayLoading() {
 	// 		return this.isSaving && this.autoSave;
 	// 	}
 	// },

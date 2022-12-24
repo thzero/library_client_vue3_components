@@ -20,6 +20,7 @@ export default {
 
 		const closeOnContentClick = ref(true);
 		const dialogSignOut = ref(new DialogSupport());
+		const drawer = ref(false);
 
 		const isAuthCompleted = computed(() => {
 			return instance.ctx.serviceStore.user != null ? instance.ctx.serviceStore.userAuthCompleted : false;
@@ -48,6 +49,7 @@ export default {
 			await instance.ctx.serviceAuth.signOut(instance.ctx.correlationId());
 		};
 		const toggleDrawer = async () => {
+			drawer.value = !drawer.value;
 			GlobalUtility.$EventBus.emit('toggle-drawer');
 		};
 
@@ -60,6 +62,7 @@ export default {
 			clickSupport,
 			dialogSignOut,
 			dialogSignOutOk,
+			drawer,
 			isAuthCompleted,
 			isLoggedIn,
 			serviceAuth,

@@ -108,9 +108,9 @@ export default {
 	// 	}
 	// },
 	// methods: {
-	// 	async initialize() {
-	// 		return null;
-	// 	}
+	// 	// async initialize() {
+	// 	// 	return null;
+	// 	// }
 	// }
 };
 </script>

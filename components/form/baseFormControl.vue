@@ -25,6 +25,10 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		buttonDeleteName: {
+			type: String,
+			default: 'buttons.delete'
+		},
 		buttonOk: {
 			type: Boolean,
 			default: true

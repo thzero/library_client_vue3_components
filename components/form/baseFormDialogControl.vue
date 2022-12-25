@@ -93,7 +93,7 @@ export default {
 		const serverErrors = ref([]);
 
 		const buttonOkDisabled = computed(() => {
-			if (dirty.value === false)
+			if (dirty.value === true)
 				return true;
 			return invalid.value;
 		});
@@ -171,6 +171,7 @@ export default {
 				serverErrors.value = [];
 
 				const result = await props.validation.$validate();
+				await props.validation.$reset();
 				instance.ctx.logger.debug('BaseFormDialogControl', 'submit', 'result', result, correlationId);
 				if (!result)
 					return;

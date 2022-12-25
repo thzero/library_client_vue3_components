@@ -33,6 +33,10 @@ export default {
 			type: String,
 			default: 'buttons.ok'
 		},
+		dirtyCheck: {
+			type: Function,
+			default: () => null
+		},
 		disabled: {
 			type: Boolean,
 			default: false
@@ -60,6 +64,9 @@ export default {
 	},
 	setup(props) {
 		const instance = getCurrentInstance();
+
+		if (!props.dirtyCheck)
+			throw Error('Requires dirtyCheck callback.');
 
 		const dialogDeleteConfirmSignal = ref(new DialogSupport());
 		const dirty = ref(false);
@@ -183,6 +190,12 @@ export default {
 			}
 		);
 
+		watch(() => dirty.value,
+			(value) => {
+				props.dirtyCheck(instance.ctx.correlationId(), dirty);
+			}
+		);
+
 		return Object.assign(baseEdit.setup(props), {
 			buttonOkDisabled,
 			dialogDeleteConfirmSignal,
@@ -201,7 +214,7 @@ export default {
 			setErrors,
 			submit,
 		});
-	},
+	}
 	// data: () => ({
 	// 	dialogDeleteConfirmSignal: new DialogSupport(),
 	// 	disabled: false,

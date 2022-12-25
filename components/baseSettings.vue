@@ -7,11 +7,11 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import Response from '@thzero/library_common/response';
 
-import base from '@/library_vue/components/base';
+import basePageEdit from '@/library_vue/components/basePageEdit';
 
 export default {
 	name: 'VtBaseSettings',
-	extends: base,
+	extends: basePageEdit,
 	setup(props) {
 		const instance = getCurrentInstance();
 		
@@ -74,13 +74,8 @@ export default {
 		onMounted(async () => {
 			await instance.ctx.reset(instance.ctx.correlationId(), null);
 		});
-		
-		// (async () => {
-		// 	// await instance.ctx.reset(instance.ctx.correlationId(), null);
-		// 	await reset(correlationId(), null);
-		// })();
 
-		return Object.assign(base.setup(props), {
+		return Object.assign(basePageEdit.setup(props), {
 			cancel,
 			close,
 			fab,
@@ -99,7 +94,7 @@ export default {
 			timeout,
 			user
 		});
-	},
+	}
 	// data: () => ({
 	// 	fab: false,
 	// 	requestReset: 0,

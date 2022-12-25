@@ -1,6 +1,8 @@
 <script>
 import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
-import { onBeforeRouteLeave } from 'vue-router'
+import { onBeforeRouteLeave } from 'vue-router';
+
+import GlobalUtility from '@thzero/library_client/utility/global';
 
 import baseEdit from './baseEdit';
 
@@ -20,16 +22,15 @@ export default {
 			if (!dirty.value)
 				return true;
 	
-			const result = window.confirm("Leave without saving?");
+			const result = window.confirm(GlobalUtility.$trans.t('questions.formDirty'));
 			return result;
 		};
 
 		const beforeUnload = (event) => {
-			if (!instance.ctx.leaveCheck())
+			if (!dirty.value)
 				return;
 
-			event.returnValue = 'sdfsdf';
-			return event.returnValue;
+			return event.returnValue = GlobalUtility.$trans.t('questions.formDirty');
 		};
 		
 		onBeforeRouteLeave(async (to, from, next) => {

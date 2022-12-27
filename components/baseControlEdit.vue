@@ -17,30 +17,29 @@ export default {
 		},
 		// must be included in props
 		modelValue: {
-			type: null,
 			default: null
 		}
 	},
 	setup (props) {
 		const instance = getCurrentInstance();
 
-		const innerValue = ref({});
+		const innerValue = ref(null);
 		const watchInner = ref(null);
 
+		const convertValue = (value) => {
+			return value;
+		};
 		const errorI = computed(() => {
 			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors && (props.validation[props.vid].$silentErrors.length > 0) : false : true;
 		});
-
 		const errorsI = computed(() => {
 			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors : [] : [];
 		});
-
 		const hideDetails = computed(() => {
 			return (!instance.ctx.errorsI || (instance.ctx.errorsI && instance.ctx.errorsI.length === 0));
 		});
-
 		const initValue = (value) => {
-			innerValue.value = value;
+			innerValue.value = instance.ctx.convertValue(value);
 			if (watchInner.value)
 				return;
 
@@ -60,6 +59,7 @@ export default {
 		);
 
 		return Object.assign(baseEdit.setup(props), {
+			convertValue,
 			errorI,
 			errorsI,
 			hideDetails,

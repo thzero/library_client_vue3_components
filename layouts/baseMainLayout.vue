@@ -1,74 +1,91 @@
 <script>
-import { getCurrentInstance, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import LibraryConstants from '@thzero/library_client/constants';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
 
-import baseLayout from './baseLayout';
+import { useBaseLayout } from './baseLayout';
 
 import DialogSupport from '@/library_vue/components/support/dialog';
 
-export default {
-	name: 'BaseMainLayout',
-	extends: baseLayout,
-	setup(props) {
-		const instance = getCurrentInstance();
+export function useBaseMainLayout(props, context, initializeI) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		features
+	} = useBaseLayout(props, context, initializeI);
 
-		const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
-		const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+	const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
+	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
 
-		const closeOnContentClick = ref(true);
-		const dialogSignOut = ref(new DialogSupport());
-		const drawer = ref(false);
+	const closeOnContentClick = ref(true);
+	const dialogSignOut = ref(new DialogSupport());
+	const drawer = ref(false);
 
-		const isAuthCompleted = computed(() => {
-			return instance.ctx.serviceStore.user != null ? instance.ctx.serviceStore.userAuthCompleted : false;
-		});
-		const isLoggedIn = computed(() => {
-			return instance.ctx.serviceStore.user != null ? instance.ctx.serviceStore.userAuthIsLoggedIn : false;
-		});
+	const isAuthCompleted = computed(() => {
+		return serviceStore.user != null ? serviceStore.userAuthCompleted : false;
+	});
+	const isLoggedIn = computed(() => {
+		return serviceStore.user != null ? serviceStore.userAuthIsLoggedIn : false;
+	});
 
-		const clickAbout = () => {
-			GlobalUtility.$navRouter.push('/about');
-		};
-		const clickOpenSource = () => {
-			GlobalUtility.$navRouter.push('/openSource');
-		};
-		const clickSignIn = () => {
-			GlobalUtility.$navRouter.push('/auth');
-		};
-		const clickSignOut = async () => {
-			dialogSignOut.value.open();
-		};
-		const clickSupport = () => {
-			GlobalUtility.$navRouter.push('/support');
-		};
-		const dialogSignOutOk = async () => {
-			dialogSignOut.value.ok();
-			await instance.ctx.serviceAuth.signOut(instance.ctx.correlationId());
-		};
-		const toggleDrawer = async () => {
-			drawer.value = !drawer.value;
-			GlobalUtility.$EventBus.emit('toggle-drawer');
-		};
+	const clickAbout = () => {
+		GlobalUtility.$navRouter.push('/about');
+	};
+	const clickOpenSource = () => {
+		GlobalUtility.$navRouter.push('/openSource');
+	};
+	const clickSignIn = () => {
+		GlobalUtility.$navRouter.push('/auth');
+	};
+	const clickSignOut = async () => {
+		dialogSignOut.value.open();
+	};
+	const clickSupport = () => {
+		GlobalUtility.$navRouter.push('/support');
+	};
+	const dialogSignOutOk = async () => {
+		dialogSignOut.value.ok();
+		await serviceAuth.signOut(correlationId());
+	};
+	const toggleDrawer = async () => {
+		drawer.value = !drawer.value;
+		GlobalUtility.$EventBus.emit('toggle-drawer');
+	};
 
-		return Object.assign(baseLayout.setup(props), {
-			closeOnContentClick,
-			clickAbout,
-			clickOpenSource,
-			clickSignIn,
-			clickSignOut,
-			clickSupport,
-			dialogSignOut,
-			dialogSignOutOk,
-			drawer,
-			isAuthCompleted,
-			isLoggedIn,
-			serviceAuth,
-			serviceStore,
-			toggleDrawer
-		});
-	}
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		features,
+		closeOnContentClick,
+		clickAbout,
+		clickOpenSource,
+		clickSignIn,
+		clickSignOut,
+		clickSupport,
+		dialogSignOut,
+		dialogSignOutOk,
+		drawer,
+		isAuthCompleted,
+		isLoggedIn,
+		serviceAuth,
+		serviceStore,
+		toggleDrawer
+	};
 };
 </script>

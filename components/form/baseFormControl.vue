@@ -1,71 +1,12 @@
 <script>
 import { computed, ref, watch } from 'vue';
 
-// import baseEdit from '@/library_vue/components/baseEdit';
+import GlobalUtility from '@thzero/library_client/utility/global';
+
 import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
 
 import DialogSupport from '@/library_vue/components/support/dialog';
 
-
-	// props: {
-	// 	autoSave: {
-	// 		type: Boolean,
-	// 		default: false
-	// 	},
-	// 	buttonClear: {
-	// 		type: Boolean,
-	// 		default: true
-	// 	},
-	// 	buttonClearName: {
-	// 		type: String,
-	// 		default: 'buttons.clear'
-	// 	},
-	// 	buttonDelete: {
-	// 		type: Boolean,
-	// 		default: false
-	// 	},
-	// 	buttonDeleteName: {
-	// 		type: String,
-	// 		default: 'buttons.delete'
-	// 	},
-	// 	buttonOk: {
-	// 		type: Boolean,
-	// 		default: true
-	// 	},
-	// 	buttonOkName: {
-	// 		type: String,
-	// 		default: 'buttons.ok'
-	// 	},
-	// 	dirtyCheck: {
-	// 		type: Function,
-	// 		default: () => null
-	// 	},
-	// 	disabled: {
-	// 		type: Boolean,
-	// 		default: false
-	// 	},
-	// 	label: {
-	// 		type: String,
-	// 		default: ''
-	// 	},
-	// 	preCompleteDelete: {
-	// 		type: Function,
-	// 		default: null
-	// 	},
-	// 	preCompleteOk: {
-	// 		type: Function,
-	// 		default: null
-	// 	},
-	// 	resetForm: {
-	// 		type: Function,
-	// 		default: null
-	// 	},
-	// 	validation: {
-	// 		type: Object,
-	// 		default: null
-	// 	}
-	// },
-	
 export function useBaseFormControlComponent(props, context, initializeI) {
 	const {
 		correlationId,
@@ -90,6 +31,10 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 	const invalid = ref(true);
 	const isClearing = ref(false);
 	// const isSaving = ref(false);
+	const notifyColor = ref(null);
+	const notifyMessage = ref(null);
+	const notifySignal = ref(false);
+	const notifyTimeout = ref(3000);
 	// const serverErrors = ref([]);
 
 	const buttonOkDisabled = computed(() => {
@@ -157,6 +102,13 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 		// 	if (el && el.length > 0)
 		// 		el[0].scrollTop = 0;
 		// }, 25);
+		if (props.notify)
+			setNotify('messages.reset');
+	};
+	const setNotify = (message, transformed) => {
+		notifyColor.value = null;
+		notifyMessage.value = (!transformed ? GlobalUtility.$trans.t(message) : message);
+		notifySignal.value = true;
 	};
 	const submit = async () => {
 		const correlationIdI = correlationId();
@@ -182,6 +134,9 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 			await props.validation.$reset();
 			logger.debug('useBaseFormControlComponent', 'submit', 'ok', null, correlationIdI);
 			context.emit('ok');
+
+			if (props.notify)
+				setNotify('messages.saved');
 		}
 		catch (err) {
 			logger.exception('useBaseFormControlComponent', 'submit', err, correlationIdI);
@@ -232,117 +187,13 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 		handleClear,
 		handleDelete,
 		handleDeleteConfirmOk,
+		notifyColor,
+		notifyMessage,
+		notifySignal,
+		notifyTimeout,
 		reset,
-		submit,
+		setNotify,
+		submit
 	};
-	// data: () => ({
-	// 	dialogDeleteConfirmSignal: new DialogSupport(),
-	// 	disabled: false,
-	// 	internalItem: null,
-	// 	invalid: true,
-    //     isSaving: false,
-	// }),
-	// watch: {
-	// 	// Handles external model changes.
-	// 	validation(value) {
-	// 		// console.log('v.invalid: ' + value.$invalid);
-	// 		// console.log('v.error: ' + value.$error);
-	// 		// console.log('v.errors: ' + JSON.stringify(value));
-	// 		this.invalid = value.$invalid;
-	// 		// console.log('v.invalid: ' + this.invalid);
-	// 	}
-	// },
-	// computed: {
-	// 	overlayLoading() {
-	// 		return this.isSaving && this.autoSave;
-	// 	}
-	// },
-	// methods: {
-	// 	handleClear(correlationId) {
-	// 		this.logger.debug('VFormControl', 'clear', 'clear', null, correlationId);
-	// 		// this.$nextTick(() => {
-	// 		// 	// this.$refs.obs.reset(correlationId);
-	// 		// });
-	// 		this.reset(this.correlationId(), false);
-	// 	},
-	// 	async handleDelete() {
-	// 		this.serverErrors = [];
-	// 		this.dialogDeleteConfirmSignal.open(this.correlationId());
-	// 	},
-	// 	async handleDeleteConfirmOk() {
-	// 		this.serverErrors = [];
-
-	// 		const correlationId = this.correlationId();
-
-	// 		this.dialogDeleteConfirmSignal.ok();
-
-	// 		if (this.preCompleteDelete) {
-	// 			const response = await this.preCompleteDelete(correlationId);
-	// 			this.logger.debug('VFormControl', 'handleDeleteConfirmOk', 'response', response, correlationId);
-	// 			if (this.hasFailed(response)) {
-	// 				// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationId);
-	// 				return;
-	// 			}
-	// 		}
-
-	// 		this.logger.debug('VFormControl', 'handleDeleteConfirmOk', 'delete', null, correlationId);
-	// 		this.handleClear(correlationId);
-	// 	},
-	// 	async reset(correlationId, value) {
-	// 		await this.resetFormI(correlationId, value);
-	// 		this.logger.debug('VFormControl', 'clear', null, null, correlationId);
-	// 		this.serverErrors = [];
-	// 		await this.validation.$validate();
-	// 		this.isSaving = false;
-	// 		// const timer = setInterval(async () => {
-	// 		// 	clearInterval(timer);
-	// 		// 	const el = document.getElementsByClassName('v-card__text');
-	// 		// 	if (el && el.length > 0)
-	// 		// 		el[0].scrollTop = 0;
-	// 		// }, 25);
-	// 	},
-	// 	// eslint-disable-next-line
-	// 	resetControl(correlationId, value) {
-	// 	},
-	// 	async resetFormI(correlationId, value) {
-	// 		if (this.resetForm)
-	// 			this.resetForm(correlationId, value);
-	// 	},
-	// 	setErrors(errors) {
-	// 		this.isSaving = false;
-	// 	},
-	// 	async submit() {
-	// 		try {
-	// 			this.isSaving = true;
-	// 			this.serverErrors = [];
-	// 			const correlationId = this.correlationId();
-
-	// 			const result = await this.validation.$validate();
-	// 			this.logger.debug('VFormControl', 'submit', 'result', result, correlationId);
-	// 			if (!result)
-	// 				return;
-
-	// 			let response = { success: true, route: null };
-	// 			if (this.preCompleteOk) {
-	// 				response = await this.preCompleteOk(correlationId);
-	// 				this.logger.debug('VFormControl', 'submit', 'response', response, correlationId);
-	// 				if (this.hasFailed(response)) {
-	// 					VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationId);
-	// 					this.isSaving = false;
-	// 					return;
-	// 				}
-	// 			}
-
-	// 			this.logger.debug('VFormControl', 'submit', 'ok', null, correlationId);
-	// 			this.$emit('ok');
-	// 		}
-	// 		catch (err) {
-	// 			this._logger.exception('VFormControl', 'submit', err, correlationId);
-	// 		}
-	// 		finally {
-	// 			this.isSaving = false;
-	// 		}
-	// 	}
-	// }
 };
 </script>

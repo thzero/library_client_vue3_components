@@ -1,141 +1,97 @@
 <script>
-import { getCurrentInstance, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import LibraryConstants from '@thzero/library_client/constants';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
 
-import base from './base';
+import { useBaseComponent } from './base';
 
-export default {
-	name: 'BaseOpenSource',
-	extends: base,
-	setup(props) {
-		const instance = getCurrentInstance();
+export function useBaseOpenSourceComponent(props, context, initializeDependenciesClient, initializeDependenciesClientFramework) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success
+	} = useBaseComponent(props, context);
 
-		const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+	const data = ref('800px');
+	const dependenciesClient = ref([]);
+	const dependenciesServer = ref([]);
 
-		const data = ref('800px');
-		const dependenciesClient = ref([]);
-		const dependenciesServer = ref([]);
+	const combineDependencies = (target, source, category) => {
+		let output = target !== null && Array.isArray(target) ? target : [];
 
-		const initializeDependenciesClient = async () => {
-			return [];
-		};
-		const initializeDependenciesClientBase = async () => {
-			const temp = await import('open-source-config');
-			const openSournce = temp.default();
-			let output = [];
-			let items;
-			for (const source of openSournce) {
-				items = source();
-				output = combineDependencies(output, items, 'client');
-			}
-			return output;
-		};
-		const initializeDependenciesClientFramework = async () => {
-			return [
-			];
-		};
+		if (source && Array.isArray(source)) {
+			source.forEach(element => {
+				if (element.category !== category)
+					return;
+				if (output.filter(l => l.name === element.name).length > 0)
+					return;
+				output.push(element);
+			});
+		}
 
-		const key = (index, prefix, secondary) => {
-				return prefix + '' + index + '' + secondary;
-		};
+		output = output.sort((a, b) => a.name.localeCompare(b.name));
+		return output;
+	};
+	const initializeDependenciesClientBase = async () => {
+		const temp = await import('open-source-config');
+		const openSournce = temp.useDependenciesClientBase();
+		let output = [];
+		let items;
+		for (const source of openSournce) {
+			items = source();
+			output = combineDependencies(output, items, 'client');
+		}
+		return output;
+	};
+	const key = (index, prefix, secondary) => {
+			return prefix + '' + index + '' + secondary;
+	};
 
-		const combineDependencies = (target, source, category) => {
-			let output = target !== null && Array.isArray(target) ? target : [];
+	onMounted(async () => {
+		dependenciesClient.value = combineDependencies(
+			await initializeDependenciesClientBase(),
+			'client');
+		dependenciesClient.value = combineDependencies(
+			dependenciesClient.value,
+			await initializeDependenciesClientFramework(),
+			'client');
+		dependenciesClient.value = combineDependencies(
+			dependenciesClient.value,
+			await initializeDependenciesClient(),
+			'client');
 
-			if (source && Array.isArray(source)) {
-				source.forEach(element => {
-					if (element.category !== category)
-						return;
-					if (output.filter(l => l.name === element.name).length > 0)
-						return;
-					output.push(element);
-				});
-			}
+		const response = await serviceStore.dispatcher.requestOpenSource();
+		if (hasFailed(response))
+			return;
+		dependenciesServer.value = response.results;
+	});
 
-			output = output.sort((a, b) => a.name.localeCompare(b.name));
-			return output;
-		};
-
-		onMounted(async () => {
-			dependenciesClient.value = combineDependencies(
-				await instance.ctx.initializeDependenciesClientBase(),
-				'client');
-			dependenciesClient.value = combineDependencies(
-				dependenciesClient.value,
-				await instance.ctx.initializeDependenciesClientFramework(),
-				'client');
-			const response = await instance.ctx.serviceStore.dispatcher.requestOpenSource();
-			if (instance.ctx.hasFailed(response))
-				return;
-			dependenciesServer.value = response.results;
-		});
-
-		return Object.assign(base.setup(props), {
-			combineDependencies,
-			data,
-			dependenciesClient,
-			dependenciesServer,
-			initializeDependenciesClient,
-			initializeDependenciesClientBase,
-			initializeDependenciesClientFramework,
-			key,
-			serviceStore
-		});
-	}
-	// data: () => ({
-	// 	height: '800px',
-	// 	dependencies: [ {
-	// 			category: 'client',
-	// 			dependencies: [ ]
-	// 		},
-	// 		{
-	// 			category: 'server',
-	// 			dependencies: [ ]
-	// 		}
-	// 	]
-	// }),
-	// computed: {
-	// 	dependenciesClient() {
-	// 		return this.initializeDependenciesClient();
-	// 	},
-	// 	dependenciesServer() {
-	// 		return this.initializeDependenciesServer();
-	// 	}
-	// },
-	// created() {
-	// 	let dependencies = this.dependencies.find(l => l.category === 'client');
-	// 	dependencies.dependencies = this.initializeDependenciesClient();
-	// 	dependencies = this.dependencies.find(l => l.category === 'server');
-	// 	dependencies.dependencies = this.initializeDependenciesServer();
-	// },
-	// mounted() {
-	// 	// this.onResize();
-	// },
-	// methods: {
-	// 	initializeDependenciesClient() {
-	// 		return [];
-	// 	},
-	// 	initializeDependenciesServer() {
-	// 		return [];
-	// 	},
-	// 	key(index, prefix, secondary) {
-	// 		return prefix + '' + index + '' + secondary;
-	// 	}// ,
-	// 	// onResize() {
-	// 	// 	let temp = window.innerHeight - 200;
-	// 	// 	if (temp < 200)
-	// 	// 		temp = 200;
-	// 	// 	this.height = temp;
-	// 	// }
-	// }
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		combineDependencies,
+		data,
+		dependenciesClient,
+		dependenciesServer,
+		initializeDependenciesClientBase,
+		key,
+		serviceStore
+	};
 };
 </script>
-
-<style scoped>
-	.opensource-padding {
-		padding-left: 16px
-	}
-</style>

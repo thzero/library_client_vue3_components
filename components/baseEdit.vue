@@ -1,7 +1,6 @@
 <script>
 import { ref } from 'vue';
 
-// import base from './base';
 import { useBaseComponent } from './base';
 
 export function useBaseEditComponent(props, context, initializeI) {

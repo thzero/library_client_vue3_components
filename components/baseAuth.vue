@@ -5,7 +5,6 @@ import LibraryConstants from '@thzero/library_client/constants';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
 
-// import base from './base';
 import { useBaseComponent } from './base';
 
 export function useBaseAuthComponent(props, context, initializeI) {

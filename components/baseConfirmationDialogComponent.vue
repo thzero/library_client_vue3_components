@@ -2,7 +2,6 @@
 <script>
 import { ref, watch } from 'vue';
 
-// import base from './base';
 import { useBaseComponent } from './base';
 
 export function useBaseConfirmationDialogComponent(props, context, initializeI, handleErrorI) {
@@ -46,9 +45,6 @@ export function useBaseConfirmationDialogComponent(props, context, initializeI, 
 			handleErrorI(response, correlationId);
 	};
 
-	// watch(dialogSignal, async (value) => {
-	// 	dialogSignal.value = value;
-	// });
 	watch(() => props.signal,
 		(value) => {
 			dialogSignal.value = value;
@@ -71,39 +67,5 @@ export function useBaseConfirmationDialogComponent(props, context, initializeI, 
 		handleError,
 		internalItem
 	};
-	// data: () => ({
-	// 	dialogSignal: false,
-	// 	internalItem: null
-	// }),
-	// watch: {
-	// 	// Handles external model changes.
-	// 	signal(value) {
-	// 		this.dialogSignal = value;
-	// 	}
-	// },
-	// methods: {
-	// 	dialogCancel() {
-	// 		this.dialogSignal = false;
-	// 		this.$emit('cancel');
-	// 	},
-	// 	async dialogOk() {
-	// 		const correlationId = this.correlationId();
-	// 		if (this.preCompleteOk) {
-	// 			const response = await this.preCompleteOk(correlationId);
-	// 			this.logger.debug('ConfirmationDialog', 'dialogOk', 'response', response, correlationId);
-	// 			if (this.hasFailed(response)) {
-	// 				this.handleError(response, correlationId);
-	// 				return;
-	// 			}
-	// 		}
-
-	// 		this.dialogSignal = false;
-	// 		this.$emit('ok');
-	// 		if (this.completeOk)
-	// 			this.completeOk();
-	// 	},
-	// 	handleError(response, correlationId) {
-	// 	}
-	// }
 };
 </script>

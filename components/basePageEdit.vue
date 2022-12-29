@@ -4,7 +4,6 @@ import { onBeforeRouteLeave } from 'vue-router';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
 
-// import baseEdit from './baseEdit';
 import { useBaseEditComponent } from './baseEdit';
 
 export function useBasePageEditComponent(props, context, initializeI) {
@@ -74,37 +73,5 @@ export function useBasePageEditComponent(props, context, initializeI) {
 		dirtyCheck,
 		leaveCheck
 	};
-	// data: () => ({
-	// 	innerValue: null,
-	// 	watch: null
-	// }),
-	// computed: {
-	// 	errorI() {
-	// 		return this.validation ? this.validation[this.vid] ? this.validation[this.vid].$error : false : true;
-	// 	},
-	// 	errorsI() {
-	// 		return this.validation ? this.validation[this.vid] ? this.validation[this.vid].$errors : [] : [];
-	// 	}
-	// },
-	// watch: {
-	// 	// Handles external model changes.
-	// 	modelValue(newVal) {
-	// 		this.initValue(newVal);
-	// 	}
-	// },
-	// methods: {
-	// 	initValue(value) {
-	// 		this.innerValue = value;
-	// 		if (this.watch)
-	// 			return;
-
-	// 		this.watch = this.$watch('innerValue', async (newVal) => {
-	// 			this.$emit('update:modelValue', newVal);
-	// 		});
-	// 	}
-	// },
-	// mounted() {
-	// 	this.initValue(this.modelValue);
-	// }
 };
 </script>

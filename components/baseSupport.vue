@@ -1,5 +1,4 @@
 <script>
-// import base from './base';
 import { useBaseComponent } from './base';
 
 export function useBaseSupportComponent(props, context, initializeI) {

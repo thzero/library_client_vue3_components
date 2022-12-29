@@ -39,6 +39,10 @@ export const useBaseFormControlProps = {
 		type: String,
 		default: ''
 	},
+	notify: {
+		type: Boolean,
+		default: true
+	},
 	preCompleteDelete: {
 		type: Function,
 		default: null

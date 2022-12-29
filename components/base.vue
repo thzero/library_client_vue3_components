@@ -1,6 +1,4 @@
 <script>
-import { ref } from 'vue';
-
 import LibraryConstants from '@thzero/library_client/constants';
 
 import LibraryUtility from '@thzero/library_common/utility';

@@ -5,7 +5,6 @@ import LibraryConstants from '@thzero/library_client/constants';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
 
-// import baseLayout from './baseLayout';
 import { useBaseLayout } from './baseLayout';
 
 import DialogSupport from '@/library_vue/components/support/dialog';

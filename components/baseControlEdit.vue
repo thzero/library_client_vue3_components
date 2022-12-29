@@ -1,25 +1,8 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
-// import baseEdit from './baseEdit';
 import { useBaseEditComponent } from './baseEdit';
 
-/*
-	props: {
-		vid: {
-			type: String,
-			default: ''
-		},
-		validation: {
-			type: Object,
-			default: null
-		},
-		// must be included in props
-		modelValue: {
-			default: null
-		}
-	},
-*/
 export function useBaseControlEditComponent(props, context, initializeI, convertValueI) {
 	const {
 		correlationId,
@@ -106,37 +89,5 @@ export function useBaseControlEditComponent(props, context, initializeI, convert
 		innerValueUpdate,
 		initValue
 	}
-	// data: () => ({
-	// 	innerValue: null,
-	// 	watch: null
-	// }),
-	// computed: {
-	// 	errorI() {
-	// 		return this.validation ? this.validation[this.vid] ? this.validation[this.vid].$error : false : true;
-	// 	},
-	// 	errorsI() {
-	// 		return this.validation ? this.validation[this.vid] ? this.validation[this.vid].$errors : [] : [];
-	// 	}
-	// },
-	// watch: {
-	// 	// Handles external model changes.
-	// 	modelValue(newVal) {
-	// 		this.initValue(newVal);
-	// 	}
-	// },
-	// methods: {
-	// 	initValue(value) {
-	// 		this.innerValue = value;
-	// 		if (this.watch)
-	// 			return;
-
-	// 		this.watch = this.$watch('innerValue', async (newVal) => {
-	// 			this.$emit('update:modelValue', newVal);
-	// 		});
-	// 	}
-	// },
-	// mounted() {
-	// 	this.initValue(this.modelValue);
-	// }
 };
 </script>

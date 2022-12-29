@@ -110,7 +110,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 	const handleClear = async (correlationId) => {
 		isClearing.value = true;
 		try {
-			logger.debug('VFormControl', 'clear', 'clear', null, correlationId);
+			logger.debug('useBaseFormControlComponent', 'clear', 'clear', null, correlationId);
 			// $nextTick(() => {
 			// 	// $refs.obs.reset(correlationId);
 			// });
@@ -133,20 +133,20 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 
 		if (props.preCompleteDelete) {
 			const response = await props.preCompleteDelete(correlationIdI);
-			logger.debug('VFormControl', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
+			logger.debug('useBaseFormControlComponent', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
 			if (hasFailed(response)) {
 				// VueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationIdI);
 				return;
 			}
 		}
 
-		logger.debug('VFormControl', 'handleDeleteConfirmOk', 'delete', null, correlationId);
+		logger.debug('useBaseFormControlComponent', 'handleDeleteConfirmOk', 'delete', null, correlationId);
 		await handleClear(correlationId);
 	};
 	const reset = async (correlationId, value) => {
 		if (props.resetForm)
 			props.resetForm(correlationId, value);
-		logger.debug('VFormControl', 'clear', null, null, correlationId);
+		logger.debug('useBaseFormControlComponent', 'clear', null, null, correlationId);
 		serverErrors.value = [];
 		await props.validation.$validate();
 		await props.validation.$reset();
@@ -165,13 +165,13 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 			serverErrors.value = [];
 
 			const result = await props.validation.$validate();
-			logger.debug('VFormControl', 'submit', 'result', result, correlationIdI);
+			logger.debug('useBaseFormControlComponent', 'submit', 'result', result, correlationIdI);
 			if (!result)
 				return;
 
 			if (props.preCompleteOk) {
 				const response = await props.preCompleteOk(correlationIdI);
-				logger.debug('VFormControl', 'submit', 'response', response, correlationIdI);
+				logger.debug('useBaseFormControlComponent', 'submit', 'response', response, correlationIdI);
 				if (hasFailed(response)) {
 					// TODO
 					// VueUtility.handleError($refs.obs, instance.ctx.serverErrors, response, correlationIdI);
@@ -179,11 +179,12 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 				}
 			}
 
-			logger.debug('VFormControl', 'submit', 'ok', null, correlationIdI);
+			await props.validation.$reset();
+			logger.debug('useBaseFormControlComponent', 'submit', 'ok', null, correlationIdI);
 			context.emit('ok');
 		}
 		catch (err) {
-			logger.exception('VFormControl', 'submit', err, correlationIdI);
+			logger.exception('useBaseFormControlComponent', 'submit', err, correlationIdI);
 		}
 		finally {
 			isSaving.value = false;

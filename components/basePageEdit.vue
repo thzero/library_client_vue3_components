@@ -26,7 +26,7 @@ export function useBasePageEditComponent(props, context, initializeI) {
 	const dirty = ref(false);
 
 	const dirtyCheck = (correlationId, controlDirtyState) => {
-		return dirty.value = controlDirtyState;
+		return dirty.value = controlDirtyState.value;
 	};
 	const leaveCheck = () => { 
 		if (!dirty.value)

@@ -49,7 +49,7 @@ export function useBaseAuthComponent(props, context, initializeI) {
 	onMounted(async () => {
 		await serviceAuth.signInCompleted();
 		GlobalUtility.$EventBus.on('auth', isLoggedIn => {
-			logger.debug('BaseAuth', 'mounted', 'isLoggedIn', isLoggedIn, this.correlationId());
+			logger.debug('useBaseAuthComponent', 'mounted', 'isLoggedIn', isLoggedIn, this.correlationId());
 			isLoggedIn.value = isLoggedIn;
 			disabled.value = isLoggedIn;
 		});

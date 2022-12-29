@@ -21,7 +21,7 @@ export function useBaseAppComponent(props, context, initializeI) {
 
 	GlobalUtility.$EventBus.on('auth-refresh', async (user) => {
 		const correlationIdI = correlationId();
-		logger.debug('BaseApp', 'created', 'auth-refresh', user, correlationIdI);
+		logger.debug('useBaseAppComponent', 'created', 'auth-refresh', user, correlationIdI);
 		// const items = await initialize(correlationIdI);
 		// if (!items)
 		// 	return;

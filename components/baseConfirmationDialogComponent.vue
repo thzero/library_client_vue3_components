@@ -29,7 +29,7 @@ export function useBaseConfirmationDialogComponent(props, context, initializeI, 
 		const correlationIdI = correlationId();
 		if (props.preCompleteOk) {
 			const response = await props.preCompleteOk(correlationIdI);
-			logger.debug('ConfirmationDialog', 'dialogOk', 'response', response, correlationId);
+			logger.debug('useBaseConfirmationDialogComponent', 'dialogOk', 'response', response, correlationId);
 			if (hasFailed(response)) {
 				handleError(response, correlationIdI);
 				return;

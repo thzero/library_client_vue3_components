@@ -3,22 +3,36 @@ import { computed } from 'vue';
 
 import Constants from '@/constants';
 
-import base from '../components/base';
+import { useBaseComponent } from '../components/base';
 
-export default {
-	name: 'BaseLayout',
-	extends: base,
-	setup(props) {
-		const features = computed(() => {
-			return Constants.Features;
-		});
+export function useBaseLayout(props, context, initializeI) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success
+	} = useBaseComponent(props, context, initializeI);
 
-		return Object.assign(base.setup(props), {
-			features
-		});
-	}
+	const features = computed(() => {
+		return Constants.Features;
+	});
+
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		features
+	};
 };
 </script>
-
-<style scoped>
-</style>

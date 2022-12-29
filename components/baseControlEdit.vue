@@ -1,11 +1,10 @@
 <script>
-import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
-import baseEdit from './baseEdit';
+// import baseEdit from './baseEdit';
+import { useBaseEditComponent } from './baseEdit';
 
-export default {
-	name: 'BaseEditControl',
-	extends: baseEdit,
+/*
 	props: {
 		vid: {
 			type: String,
@@ -20,53 +19,92 @@ export default {
 			default: null
 		}
 	},
-	setup (props) {
-		const instance = getCurrentInstance();
+*/
+export function useBaseControlEditComponent(props, context, initializeI, convertValueI) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors
+	} = useBaseEditComponent(props, context, initializeI);
 
-		const innerValue = ref(null);
-		const watchInner = ref(null);
+	const innerValue = ref(null);
+	// const watchInner = ref(null);
 
-		const convertValue = (value) => {
-			return value;
-		};
-		const errorI = computed(() => {
-			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors && (props.validation[props.vid].$silentErrors.length > 0) : false : true;
-		});
-		const errorsI = computed(() => {
-			return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors : [] : [];
-		});
-		const hideDetails = computed(() => {
-			return (!instance.ctx.errorsI || (instance.ctx.errorsI && instance.ctx.errorsI.length === 0));
-		});
-		const initValue = (value) => {
-			innerValue.value = instance.ctx.convertValue(value);
-			if (watchInner.value)
-				return;
+	const convertValue = (value) => {
+		if (convertValueI)
+			return convertValueI(value);
+		return value;
+	};
+	const errorI = computed(() => {
+		return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors && (props.validation[props.vid].$silentErrors.length > 0) : false : true;
+	});
+	const errorsI = computed(() => {
+		return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors : [] : [];
+	});
+	const hideDetails = computed(() => {
+		return (!errorsI || (errorsI && errorsI.length === 0));
+	});
+	const initValue = (value) => {
+		innerValue.value = convertValue(value);
+		// if (watchInner.value)
+		// 	return;
 
-			watchInner.value = instance.ctx.$watch('innerValue', async (newVal) => {
-				instance.ctx.$emit('update:modelValue', newVal);
-			});
-		};
+		// watchInner.value = context.watch('innerValue', async (newVal) => {
+		// 	context.emit('update:modelValue', newVal);
+		// });
+	};
 
-		onMounted(async () => {
-			instance.ctx.initValue(props.modelValue);
-		});
+	const innerValueUpdate = (value) => {
+		if (props.change)
+			props.change(value);
 
-		watch(() => props.modelValue,
-			(value) => {
-				instance.ctx.initValue(value);
-			}
-		);
+		context.emit('update:modelValue', value);
+	};
 
-		return Object.assign(baseEdit.setup(props), {
-			convertValue,
-			errorI,
-			errorsI,
-			hideDetails,
-			innerValue,
-			initValue,
-			watchInner
-		});
+	onMounted(async () => {
+		initValue(props.modelValue);
+	});
+
+	watch(() => props.modelValue,
+		(value) => {
+			initValue(value);
+		}
+	);
+	watch(() => innerValue,
+		(value) => {
+			context.emit('update:modelValue', value);
+		}
+	);
+
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors,
+		convertValue,
+		errorI,
+		errorsI,
+		hideDetails,
+		innerValue,
+		innerValueUpdate,
+		initValue
 	}
 	// data: () => ({
 	// 	innerValue: null,

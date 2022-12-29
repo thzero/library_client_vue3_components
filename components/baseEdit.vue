@@ -1,12 +1,43 @@
 <script>
-import base from './base';
+import { ref } from 'vue';
 
-export default {
-	name: 'BaseEdit',
-	extends: base,
-	setup (props) {
-		return Object.assign(base.setup(props), {
-		});
+// import base from './base';
+import { useBaseComponent } from './base';
+
+export function useBaseEditComponent(props, context, initializeI) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+	} = useBaseComponent(props, context, initializeI);
+	
+	const isSaving = ref(false);
+	const serverErrors = ref([]);
+	
+	const setErrors = (errors) => {
+		serverErrors.value = errors !== null ? errors : [];
+		isSaving.value = false;
+	};
+
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors
 	}
 };
 </script>

@@ -1,70 +1,86 @@
 <script>
-import { computed, getCurrentInstance, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import LibraryConstants from '@thzero/library_client/constants';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
 
-import base from './base';
+// import base from './base';
+import { useBaseComponent } from './base';
 
-export default {
-	name: 'BaseAuth',
-	extends: base,
-	setup(props) {
-		const serviceFeatures = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_FEATURES);
-		const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
+export function useBaseAuthComponent(props, context, initializeI) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success
+	} = useBaseComponent(props, context, initializeI);
 
-		const allowRememberMe = ref(serviceFeatures && serviceFeatures.features ? serviceFeatures.features.RememberMe : false);
-		const authenticated = ref(false);
-		const disabled = ref(false);
-		const features = ref(serviceFeatures.features);
-		const isLoggedIn = ref(false);
-		const rememberMe = ref(false);
+	const serviceFeatures = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_FEATURES);
+	const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
 
-		const display = computed(() => {
-			return !isLoggedIn.value;
+	const allowRememberMe = ref(serviceFeatures && serviceFeatures.features ? serviceFeatures.features.RememberMe : false);
+	const authenticated = ref(false);
+	const disabled = ref(false);
+	const features = ref(serviceFeatures.features);
+	const isLoggedIn = ref(false);
+	const rememberMe = ref(false);
+
+	const display = computed(() => {
+		return !isLoggedIn.value;
+	});
+
+	const signInGoogle = async () => {
+		disabled.value = true;
+		await serviceAuth.signIn(correlationId());
+	};
+
+	// onBeforeCreate(async () => {
+	// 	authenticated.value = await serviceAuth.isAuthenticated;
+	// 	if (authenticated.value)
+	// 		GlobalUtility.$navRouter.push('/');
+	// });
+
+	onMounted(async () => {
+		await serviceAuth.signInCompleted();
+		GlobalUtility.$EventBus.on('auth', isLoggedIn => {
+			logger.debug('BaseAuth', 'mounted', 'isLoggedIn', isLoggedIn, this.correlationId());
+			isLoggedIn.value = isLoggedIn;
+			disabled.value = isLoggedIn;
 		});
+	});
 
-		const instance = getCurrentInstance();
+	(async () => {
+		authenticated.value = await serviceAuth.isAuthenticated;
+		if (authenticated.value)
+			GlobalUtility.$navRouter.push('/');
+	})();
 
-		const signInGoogle = async () => {
-			disabled.value = true;
-			await instance.ctx.serviceAuth.signIn(instance.ctx.correlationId());
-		};
-
-		// onBeforeCreate(async () => {
-		// 	authenticated.value = await instance.ctx.serviceAuth.isAuthenticated;
-		// 	if (authenticated.value)
-		// 		GlobalUtility.$navRouter.push('/');
-		// });
-
-		onMounted(async () => {
-			await instance.ctx.serviceAuth.signInCompleted();
-			GlobalUtility.$EventBus.on('auth', isLoggedIn => {
-				instance.ctx.logger.debug('BaseAuth', 'mounted', 'isLoggedIn', isLoggedIn, this.correlationId());
-				isLoggedIn.value = isLoggedIn;
-				disabled.value = isLoggedIn;
-			});
-		});
-
-		(async () => {
-			authenticated.value = await serviceAuth.isAuthenticated;
-			if (authenticated.value)
-				GlobalUtility.$navRouter.push('/');
-		})();
-
-		return Object.assign(base.setup(props), {
-			allowRememberMe,
-			authenticated,
-			disabled,
-			display,
-			features,
-			isLoggedIn,
-			rememberMe,
-			serviceAuth,
-			signInGoogle
-		});
-	}
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		allowRememberMe,
+		authenticated,
+		disabled,
+		display,
+		features,
+		isLoggedIn,
+		rememberMe,
+		serviceAuth,
+		signInGoogle
+	};
 	// data: () => ({
 	// 	allowRememberMe: false,
 	// 	authenticated: false,
@@ -99,6 +115,5 @@ export default {
 	// 		this.disabled = true;
 	// 		await this.auth.signIn(this.correlationId());
 	// 	}
-	// }
 };
 </script>

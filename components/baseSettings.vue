@@ -1,5 +1,5 @@
 <script>
-import { computed, getCurrentInstance, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import LibraryConstants from '@thzero/library_client/constants';
 
@@ -7,94 +7,122 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import Response from '@thzero/library_common/response';
 
-import basePageEdit from '@/library_vue/components/basePageEdit';
+// import basePageEdit from '@/library_vue/components/basePageEdit';
+import { useBasePageEditComponent } from '@/library_vue/components/basePageEdit';
 
-export default {
-	name: 'VtBaseSettings',
-	extends: basePageEdit,
-	setup(props) {
-		const instance = getCurrentInstance();
-		
-		const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
-		const serviceUsers = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_USER);
+export function useBaseSettingsComponent(props, context, initializeI, refForm) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors,
+		beforeUnload,
+		dirty,
+		dirtyCheck,
+		leaveCheck
+	} = useBasePageEditComponent(props, context, initializeI);
 
-		const fab = ref(false);
-		const requestReset = ref(0);
-		const snackbar = ref(false);
-		const timeout = ref(2000);
+	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+	const serviceUsers = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_USER);
 
-		const hasPicture = computed(() => {
-			return (instance.ctx.serviceStore.user != null && instance.ctx.serviceStore.user.external != null && !String.isNullOrEmpty(instance.ctx.serviceStore.user.external.picture));
-		});
-		const name = computed(() => {
-			return (instance.ctx.serviceStore.user != null && instance.ctx.serviceStore.user.external != null && !String.isNullOrEmpty(instance.ctx.serviceStore.user.external.name) ? instance.ctx.serviceStore.user.external.name : '');
-		});
-		const picture = computed(() => {
-			return (instance.ctx.serviceStore.user != null && instance.ctx.serviceStore.user.external != null && !String.isNullOrEmpty(instance.ctx.serviceStore.user.external.picture) ? instance.ctx.serviceStore.user.external.picture : '');
-		});
-		const user = computed(() => {
-			return instance.ctx.serviceStore.user;
-		});
-		
-		const cancel = async () => {
-			await instance.ctx.reset(instance.ctx.correlationId());
-		};
-		const close = async () => {
-		};
-		const ok = async () => {
-			instance.ctx.snackbar = true;
-			return true;
-		};
-		const open = async () => {
-			instance.ctx.fieldType = null;
-			instance.ctx.name = '';
-		};
-		const preComplete = async (correlationId) => {
-			const responses = [];
+	const fab = ref(false);
+	const requestReset = ref(0);
+	const snackbar = ref(false);
+	const timeout = ref(2000);
 
-			await instance.ctx.preCompleteI(correlationId, responses);
+	const hasPicture = computed(() => {
+		return (serviceStore.user != null && serviceStore.user.external != null && !String.isNullOrEmpty(serviceStore.user.external.picture));
+	});
+	const name = computed(() => {
+		return (serviceStore.user != null && serviceStore.user.external != null && !String.isNullOrEmpty(serviceStore.user.external.name) ? serviceStore.user.external.name : '');
+	});
+	const picture = computed(() => {
+		return (serviceStore.user != null && serviceStore.user.external != null && !String.isNullOrEmpty(serviceStore.user.external.picture) ? serviceStore.user.external.picture : '');
+	});
+	const user = computed(() => {
+		return serviceStore.user;
+	});
+	
+	const cancel = async () => {
+		await reset(correlationId());
+	};
+	const close = async () => {
+	};
+	const ok = async () => {
+		snackbar = true;
+		return true;
+	};
+	const open = async () => {
+	};
+	const preComplete = async (correlationId) => {
+		const responses = [];
 
-			const response = Response.success(correlationId);
-			for (const item of responses)
-				response.success &= item.success;
-			return response;
-		};
-		// eslint-disable-next-line
-		const preCompleteI = async (correlationId, value) =>  {
-		};
-		const reset = (correlationId) => {
-			const self = instance.ctx;
-			setTimeout(() => {
-				instance.ctx.$refs.form.reset(correlationId);
-			},
-			150);
-		};
-		// eslint-disable-next-line
+		await preCompleteI(correlationId, responses);
 
-		onMounted(async () => {
-			await instance.ctx.reset(instance.ctx.correlationId(), null);
-		});
+		const response = Response.success(correlationId);
+		for (const item of responses)
+			response.success &= item.success;
+		return response;
+	};
+	// eslint-disable-next-line
+	const preCompleteI = async (correlationId, value) =>  {
+	};
+	const reset = async (correlationId) => {
+		setTimeout(async () => {
+			// $refs.form.reset(correlationId);
+			await refForm.value.reset(correlationId);
+		},
+		150);
+	};
+	// eslint-disable-next-line
 
-		return Object.assign(basePageEdit.setup(props), {
-			cancel,
-			close,
-			fab,
-			hasPicture,
-			name,
-			ok,
-			open,
-			picture,
-			preComplete,
-			preCompleteI,
-			requestReset,
-			reset,
-			serviceStore,
-			serviceUsers,
-			snackbar,
-			timeout,
-			user
-		});
-	}
+	onMounted(async () => {
+		await reset(correlationId(), null);
+	});
+
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors,
+		beforeUnload,
+		dirty,
+		dirtyCheck,
+		leaveCheck,
+		cancel,
+		close,
+		fab,
+		hasPicture,
+		name,
+		ok,
+		open,
+		picture,
+		preComplete,
+		preCompleteI,
+		requestReset,
+		reset,
+		serviceStore,
+		serviceUsers,
+		snackbar,
+		timeout,
+		user
+	};
 	// data: () => ({
 	// 	fab: false,
 	// 	requestReset: 0,

@@ -1,224 +1,239 @@
 <script>
-import { computed, getCurrentInstance, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
-import baseEdit from '@/library_vue/components/baseEdit';
+// import baseEdit from '@/library_vue/components/baseEdit';
+import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
 
 import DialogSupport from '@/library_vue/components/support/dialog';
 
-export default {
-	name: 'baseFormControl',
-	extends: baseEdit,
-	props: {
-		autoSave: {
-			type: Boolean,
-			default: false
-		},
-		buttonClear: {
-			type: Boolean,
-			default: true
-		},
-		buttonClearName: {
-			type: String,
-			default: 'buttons.clear'
-		},
-		buttonDelete: {
-			type: Boolean,
-			default: false
-		},
-		buttonDeleteName: {
-			type: String,
-			default: 'buttons.delete'
-		},
-		buttonOk: {
-			type: Boolean,
-			default: true
-		},
-		buttonOkName: {
-			type: String,
-			default: 'buttons.ok'
-		},
-		dirtyCheck: {
-			type: Function,
-			default: () => null
-		},
-		disabled: {
-			type: Boolean,
-			default: false
-		},
-		label: {
-			type: String,
-			default: ''
-		},
-		preCompleteDelete: {
-			type: Function,
-			default: null
-		},
-		preCompleteOk: {
-			type: Function,
-			default: null
-		},
-		resetForm: {
-			type: Function,
-			default: null
-		},
-		validation: {
-			type: Object,
-			default: null
+
+	// props: {
+	// 	autoSave: {
+	// 		type: Boolean,
+	// 		default: false
+	// 	},
+	// 	buttonClear: {
+	// 		type: Boolean,
+	// 		default: true
+	// 	},
+	// 	buttonClearName: {
+	// 		type: String,
+	// 		default: 'buttons.clear'
+	// 	},
+	// 	buttonDelete: {
+	// 		type: Boolean,
+	// 		default: false
+	// 	},
+	// 	buttonDeleteName: {
+	// 		type: String,
+	// 		default: 'buttons.delete'
+	// 	},
+	// 	buttonOk: {
+	// 		type: Boolean,
+	// 		default: true
+	// 	},
+	// 	buttonOkName: {
+	// 		type: String,
+	// 		default: 'buttons.ok'
+	// 	},
+	// 	dirtyCheck: {
+	// 		type: Function,
+	// 		default: () => null
+	// 	},
+	// 	disabled: {
+	// 		type: Boolean,
+	// 		default: false
+	// 	},
+	// 	label: {
+	// 		type: String,
+	// 		default: ''
+	// 	},
+	// 	preCompleteDelete: {
+	// 		type: Function,
+	// 		default: null
+	// 	},
+	// 	preCompleteOk: {
+	// 		type: Function,
+	// 		default: null
+	// 	},
+	// 	resetForm: {
+	// 		type: Function,
+	// 		default: null
+	// 	},
+	// 	validation: {
+	// 		type: Object,
+	// 		default: null
+	// 	}
+	// },
+	
+export function useBaseFormControlComponent(props, context, initializeI) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors
+	} = useBaseEditComponent(props, context, initializeI);
+	
+	if (!props.dirtyCheck)
+		throw Error('Requires dirtyCheck callback.');
+
+	const dialogDeleteConfirmSignal = ref(new DialogSupport());
+	const dirty = ref(false);
+	const invalid = ref(true);
+	const isClearing = ref(false);
+	// const isSaving = ref(false);
+	// const serverErrors = ref([]);
+
+	const buttonOkDisabled = computed(() => {
+		if (dirty.value === false)
+			return true;
+		return (invalid.value || props.disabled);
+	});
+	const isDeleting = computed(() => {
+		return dialogDeleteConfirmSignal.value.signal;
+	});
+	const isLoading = computed(() => {
+		return isClearing.value || isDeleting.value || isSaving.value;
+	});
+	const overlayLoading = computed(() => {
+		return isSaving.value && props.autoSave;
+	});
+	
+	const handleClear = async (correlationId) => {
+		isClearing.value = true;
+		try {
+			logger.debug('VFormControl', 'clear', 'clear', null, correlationId);
+			// $nextTick(() => {
+			// 	// $refs.obs.reset(correlationId);
+			// });
+			await reset(correlationId(), false);
 		}
-	},
-	setup(props) {
-		const instance = getCurrentInstance();
+		finally {
+			isClearing.value = false;
+		}
+	};
+	const handleDelete = async () => {
+		serverErrors.value = [];
+		dialogDeleteConfirmSignal.value.open(correlationId());
+	};
+	const handleDeleteConfirmOk = async () => {
+		serverErrors.value = [];
 
-		if (!props.dirtyCheck)
-			throw Error('Requires dirtyCheck callback.');
+		const correlationIdI = correlationId();
 
-		const dialogDeleteConfirmSignal = ref(new DialogSupport());
-		const dirty = ref(false);
-		const invalid = ref(true);
-		const isClearing = ref(false);
-		const isSaving = ref(false);
-		const serverErrors = ref([]);
+		dialogDeleteConfirmSignal.value.ok();
 
-		const buttonOkDisabled = computed(() => {
-			if (dirty.value === false)
-				return true;
-			return (invalid.value || props.disabled);
-		});
-		const isDeleting = computed(() => {
-			return dialogDeleteConfirmSignal.value.signal;
-		});
-		const isLoading = computed(() => {
-			return isClearing.value || instance.ctx.isDeleting || isSaving.value;
-		});
-		const overlayLoading = computed(() => {
-			return isSaving.value && props.autoSave;
-		});
-		
-		const handleClear = async (correlationId) => {
-			isClearing.value = true;
-			try {
-				instance.ctx.logger.debug('VFormControl', 'clear', 'clear', null, correlationId);
-				// instance.ctx.$nextTick(() => {
-				// 	// instance.ctx.$refs.obs.reset(correlationId);
-				// });
-				await instance.ctx.reset(instance.ctx.correlationId(), false);
+		if (props.preCompleteDelete) {
+			const response = await props.preCompleteDelete(correlationIdI);
+			logger.debug('VFormControl', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
+			if (hasFailed(response)) {
+				// VueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationIdI);
+				return;
 			}
-			finally {
-				isClearing.value = false;
-			}
-		};
-		const handleDelete = async () => {
+		}
+
+		logger.debug('VFormControl', 'handleDeleteConfirmOk', 'delete', null, correlationId);
+		await handleClear(correlationId);
+	};
+	const reset = async (correlationId, value) => {
+		if (props.resetForm)
+			props.resetForm(correlationId, value);
+		logger.debug('VFormControl', 'clear', null, null, correlationId);
+		serverErrors.value = [];
+		await props.validation.$validate();
+		await props.validation.$reset();
+		isSaving.value = false;
+		// const timer = setInterval(async () => {
+		// 	clearInterval(timer);
+		// 	const el = document.getElementsByClassName('v-card__text');
+		// 	if (el && el.length > 0)
+		// 		el[0].scrollTop = 0;
+		// }, 25);
+	};
+	const submit = async () => {
+		const correlationIdI = correlationId();
+		try {
+			isSaving.value = true;
 			serverErrors.value = [];
-			dialogDeleteConfirmSignal.value.open(instance.ctx.correlationId());
-		};
-		const handleDeleteConfirmOk = async () => {
-			serverErrors.value = [];
 
-			const correlationId = instance.ctx.correlationId();
+			const result = await props.validation.$validate();
+			logger.debug('VFormControl', 'submit', 'result', result, correlationIdI);
+			if (!result)
+				return;
 
-			dialogDeleteConfirmSignal.value.ok();
-
-			if (instance.ctx.preCompleteDelete) {
-				const response = await instance.ctx.preCompleteDelete(correlationId);
-				instance.ctx.logger.debug('VFormControl', 'handleDeleteConfirmOk', 'response', response, correlationId);
-				if (instance.ctx.hasFailed(response)) {
-					// VueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationId);
+			if (props.preCompleteOk) {
+				const response = await props.preCompleteOk(correlationIdI);
+				logger.debug('VFormControl', 'submit', 'response', response, correlationIdI);
+				if (hasFailed(response)) {
+					// TODO
+					// VueUtility.handleError($refs.obs, instance.ctx.serverErrors, response, correlationIdI);
 					return;
 				}
 			}
 
-			instance.ctx.logger.debug('VFormControl', 'handleDeleteConfirmOk', 'delete', null, correlationId);
-			await instance.ctx.handleClear(correlationId);
-		};
-		const reset = async (correlationId, value) => {
-			
-			if (instance.ctx.resetForm)
-				instance.ctx.resetForm(correlationId, value);
-			instance.ctx.logger.debug('VFormControl', 'clear', null, null, correlationId);
-			serverErrors.value = [];
-			await props.validation.$validate();
-			await props.validation.$reset();
+			logger.debug('VFormControl', 'submit', 'ok', null, correlationIdI);
+			context.emit('ok');
+		}
+		catch (err) {
+			logger.exception('VFormControl', 'submit', err, correlationIdI);
+		}
+		finally {
 			isSaving.value = false;
-			// const timer = setInterval(async () => {
-			// 	clearInterval(timer);
-			// 	const el = document.getElementsByClassName('v-card__text');
-			// 	if (el && el.length > 0)
-			// 		el[0].scrollTop = 0;
-			// }, 25);
-		};
-		const setErrors = (errors) => {
-			serverErrors.value = errors !== null ? errors : [];
-			isSaving.value = false;
-		};
-		const submit = async () => {
-			const correlationId = instance.ctx.correlationId();
-			try {
-				isSaving.value = true;
-				serverErrors.value = [];
-				const correlationId = instance.ctx.correlationId();
+		}
+	};
 
-				const result = await props.validation.$validate();
-				instance.ctx.logger.debug('VFormControl', 'submit', 'result', result, correlationId);
-				if (!result)
-					return;
+	watch(() => props.validation,
+		(value) => {
+			// console.log('v.invalid: ' + value.$invalid);
+			// console.log('v.error: ' + value.$error);
+			// console.log('v.errors: ' + JSON.stringify(value));
+			invalid.value = value.$invalid;
+			dirty.value = value.$anyDirty;
+			// console.log('v.invalid: ' + invalid.value);
+		}
+	);
 
-				if (instance.ctx.preCompleteOk) {
-					const response = await instance.ctx.preCompleteOk(correlationId);
-					instance.ctx.logger.debug('VFormControl', 'submit', 'response', response, correlationId);
-					if (instance.ctx.hasFailed(response)) {
-						// TODO
-						// VueUtility.handleError(instance.ctx.$refs.obs, instance.ctx.serverErrors, response, correlationId);
-						return;
-					}
-				}
+	watch(() => dirty.value,
+		(value) => {
+			props.dirtyCheck(correlationId(), dirty);
+		}
+	);
 
-				instance.ctx.logger.debug('VFormControl', 'submit', 'ok', null, correlationId);
-				instance.ctx.$emit('ok');
-			}
-			catch (err) {
-				instance.ctx.logger.exception('VFormControl', 'submit', err, correlationId);
-			}
-			finally {
-				isSaving.value = false;
-			}
-		};
-
-		watch(() => props.validation,
-			(value) => {
-				// console.log('v.invalid: ' + value.$invalid);
-				// console.log('v.error: ' + value.$error);
-				// console.log('v.errors: ' + JSON.stringify(value));
-				invalid.value = value.$invalid;
-				dirty.value = value.$anyDirty;
-				// console.log('v.invalid: ' + invalid.value);
-			}
-		);
-
-		watch(() => dirty.value,
-			(value) => {
-				props.dirtyCheck(instance.ctx.correlationId(), dirty);
-			}
-		);
-
-		return Object.assign(baseEdit.setup(props), {
-			buttonOkDisabled,
-			dialogDeleteConfirmSignal,
-			dirty,
-			invalid,
-			isClearing,
-			isDeleting,
-			isLoading,
-			isSaving,
-			overlayLoading,
-			handleClear,
-			handleDelete,
-			handleDeleteConfirmOk,
-			reset,
-			serverErrors,
-			setErrors,
-			submit,
-		});
-	}
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors,
+		buttonOkDisabled,
+		dialogDeleteConfirmSignal,
+		dirty,
+		invalid,
+		isClearing,
+		isDeleting,
+		isLoading,
+		overlayLoading,
+		handleClear,
+		handleDelete,
+		handleDeleteConfirmOk,
+		reset,
+		submit,
+	};
 	// data: () => ({
 	// 	dialogDeleteConfirmSignal: new DialogSupport(),
 	// 	disabled: false,

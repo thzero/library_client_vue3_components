@@ -2,12 +2,13 @@
 import { computed, ref, watch } from 'vue';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryUtility from '@thzero/library_common/utility';
 
 import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
 
 import DialogSupport from '@/library_vue/components/support/dialog';
 
-export function useBaseFormControlComponent(props, context, initializeI) {
+export function useBaseFormControlComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -21,7 +22,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 		isSaving,
 		serverErrors,
 		setErrors
-	} = useBaseEditComponent(props, context, initializeI);
+	} = useBaseEditComponent(props, context, options);
 	
 	if (!props.dirtyCheck)
 		throw Error('Requires dirtyCheck callback.');
@@ -54,7 +55,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 		isClearing.value = true;
 		try {
 			logger.debug('useBaseFormControlComponent', 'clear', 'clear', null, correlationId);
-			await reset(correlationId, false);
+			await reset(correlationId);
 		}
 		finally {
 			isClearing.value = false;
@@ -93,7 +94,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 		await props.validation.$reset();
 		isSaving.value = false;
 
-		notify = notify !== null || notify !== undefined ? notify : true;
+		notify = LibraryUtility.isNotNull(notify) ? notify : true;
 		if (props.notify && notify)
 			setNotify(correlationId, props.notifyMessageReset);
 	};

@@ -5,7 +5,7 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import { useBaseComponent } from './base';
 
-export function useBaseAppComponent(props, context, initializeI) {
+export function useBaseAppComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -16,7 +16,7 @@ export function useBaseAppComponent(props, context, initializeI) {
 		noBreakingSpaces,
 		notImplementedError,
 		success
-	} = useBaseComponent(props, context, initializeI);
+	} = useBaseComponent(props, context, options);
 
 	GlobalUtility.$EventBus.on('auth-refresh', async (user) => {
 		const correlationIdI = correlationId();

@@ -5,7 +5,7 @@ import Constants from '@/constants';
 
 import { useBaseComponent } from '../components/base';
 
-export function useBaseLayout(props, context, initializeI) {
+export function useBaseLayout(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -16,7 +16,7 @@ export function useBaseLayout(props, context, initializeI) {
 		noBreakingSpaces,
 		notImplementedError,
 		success
-	} = useBaseComponent(props, context, initializeI);
+	} = useBaseComponent(props, context, options);
 
 	const features = computed(() => {
 		return Constants.Features;

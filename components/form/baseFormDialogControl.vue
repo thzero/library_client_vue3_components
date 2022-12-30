@@ -7,7 +7,7 @@ import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
 
 import DialogSupport from '../support/dialog';
 
-export function useBaseFormDialogControlComponent(props, context, initializeI) {
+export function useBaseFormDialogControlComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -21,7 +21,7 @@ export function useBaseFormDialogControlComponent(props, context, initializeI) {
 		isSaving,
 		serverErrors,
 		setErrors
-	} = useBaseEditComponent(props, context, initializeI);
+	} = useBaseEditComponent(props, context, options);
 
 	const dialogHeightI = ref(300);
 	const dialogDeleteConfirmSignal = ref(new DialogSupport());

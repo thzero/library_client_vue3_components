@@ -6,7 +6,7 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import { useBaseEditComponent } from './baseEdit';
 
-export function useBasePageEditComponent(props, context, initializeI) {
+export function useBasePageEditComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -20,7 +20,7 @@ export function useBasePageEditComponent(props, context, initializeI) {
 		isSaving,
 		serverErrors,
 		setErrors
-	} = useBaseEditComponent(props, context, initializeI);
+	} = useBaseEditComponent(props, context, options);
 
 	const dirty = ref(false);
 

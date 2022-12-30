@@ -9,7 +9,7 @@ import { useBaseLayout } from './baseLayout';
 
 import DialogSupport from '@/library_vue/components/support/dialog';
 
-export function useBaseMainLayout(props, context, initializeI) {
+export function useBaseMainLayout(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -21,7 +21,7 @@ export function useBaseMainLayout(props, context, initializeI) {
 		notImplementedError,
 		success,
 		features
-	} = useBaseLayout(props, context, initializeI);
+	} = useBaseLayout(props, context, options);
 
 	const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
 	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);

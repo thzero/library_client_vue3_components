@@ -1,43 +1,31 @@
-export const baseFormControlProps = {
-	autoSave: {
+export const baseFormDialogControlProps = {
+	buttonCancel: {
 		type: Boolean,
-		default: false
+		default: true
 	},
 	buttonClear: {
 		type: Boolean,
 		default: true
 	},
-	buttonClearName: {
-		type: String,
-		default: 'buttons.clear'
-	},
 	buttonDelete: {
 		type: Boolean,
 		default: false
-	},
-	buttonDeleteName: {
-		type: String,
-		default: 'buttons.delete'
 	},
 	buttonOk: {
 		type: Boolean,
 		default: true
 	},
-	buttonOkName: {
-		type: String,
-		default: 'buttons.ok'
-	},
-	dirtyCheck: {
-		type: Function,
-		default: () => null
-	},
-	disabled: {
+	fullscreen: {
 		type: Boolean,
 		default: false
 	},
 	label: {
 		type: String,
 		default: ''
+	},
+	maxWidth: {
+		type: String,
+		default: '600px'
 	},
 	notify: {
 		type: Boolean,
@@ -59,12 +47,36 @@ export const baseFormControlProps = {
 		type: Function,
 		default: null
 	},
-	resetForm: {
+	resetDialog: {
 		type: Function,
 		default: null
+	},
+	scrollable: {
+		type: Boolean,
+		default: false
+	},
+	scrollableAutoResize: {
+		type: Boolean,
+		default: true
+	},
+	scrollableAutoResizeFactor: {
+		type: Number,
+		default: 0.5
+	},
+	scrollableHeight: {
+		type: String,
+		default: '500'
+	},
+	signal: {
+		type: Boolean,
+		default: false
 	},
 	validation: {
 		type: Object,
 		default: null
+	},
+	width: {
+		type: String,
+		default: '600px'
 	}
 };

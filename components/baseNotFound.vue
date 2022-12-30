@@ -5,7 +5,7 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import { useBaseComponent } from './base';
 
-export function useBaseNotFound(props, context, initializeI) {
+export function useBaseNotFoundComponent(props, context, initializeI) {
 	const {
 		correlationId,
 		error,

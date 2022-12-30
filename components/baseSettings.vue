@@ -3,13 +3,14 @@ import { computed, onMounted, ref } from 'vue';
 
 import LibraryConstants from '@thzero/library_client/constants';
 
+import LibraryUtility from '@thzero/library_common/utility/index';
 import GlobalUtility from '@thzero/library_client/utility/global';
 
 import Response from '@thzero/library_common/response';
 
 import { useBasePageEditComponent } from '@/library_vue/components/basePageEdit';
 
-export function useBaseSettingsComponent(props, context, initializeI, refForm) {
+export function useBaseSettingsComponent(props, context, options, refForm) {
 	const {
 		correlationId,
 		error,
@@ -27,15 +28,13 @@ export function useBaseSettingsComponent(props, context, initializeI, refForm) {
 		dirty,
 		dirtyCheck,
 		leaveCheck
-	} = useBasePageEditComponent(props, context, initializeI);
+	} = useBasePageEditComponent(props, context, options);
 
 	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
 	const serviceUsers = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_USER);
 
 	const fab = ref(false);
 	const requestReset = ref(0);
-	const snackbar = ref(false);
-	const timeout = ref(2000);
 
 	const hasPicture = computed(() => {
 		return (serviceStore.user != null && serviceStore.user.external != null && !String.isNullOrEmpty(serviceStore.user.external.picture));
@@ -51,12 +50,11 @@ export function useBaseSettingsComponent(props, context, initializeI, refForm) {
 	});
 	
 	const cancel = async () => {
-		await reset(correlationId());
+		await reset(correlationId(), true);
 	};
 	const close = async () => {
 	};
 	const ok = async () => {
-		snackbar = true;
 		return true;
 	};
 	const open = async () => {
@@ -74,17 +72,19 @@ export function useBaseSettingsComponent(props, context, initializeI, refForm) {
 	// eslint-disable-next-line
 	const preCompleteI = async (correlationId, value) =>  {
 	};
-	const reset = async (correlationId) => {
-		setTimeout(async () => {
-			// $refs.form.reset(correlationId);
-			await refForm.value.reset(correlationId);
-		},
-		150);
+	const reset = async (correlationId, notify) => {
+		if (options && LibraryUtility.isObject(options) && options.formRef)
+			await options.formRef.value.reset(correlationId, notify);
+		// setTimeout(async () => {
+		// 	if (options && LibraryUtility.isObject(options) && options.formRef)
+		// 		await options.formRef.value.reset(correlationId, notify);
+		// },
+		// 150);
 	};
 	// eslint-disable-next-line
 
 	onMounted(async () => {
-		await reset(correlationId(), null);
+		await reset(correlationId(), false);
 	});
 
 	return {
@@ -118,8 +118,6 @@ export function useBaseSettingsComponent(props, context, initializeI, refForm) {
 		reset,
 		serviceStore,
 		serviceUsers,
-		snackbar,
-		timeout,
 		user
 	};
 };

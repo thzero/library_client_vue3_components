@@ -2,9 +2,11 @@
 <script>
 import { ref, watch } from 'vue';
 
+import LibraryUtility from '@thzero/library_common/utility/index';
+
 import { useBaseComponent } from './base';
 
-export function useBaseConfirmationDialogComponent(props, context, initializeI, handleErrorI) {
+export function useBaseConfirmationDialogComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -15,7 +17,7 @@ export function useBaseConfirmationDialogComponent(props, context, initializeI, 
 		noBreakingSpaces,
 		notImplementedError,
 		success
-	} = useBaseComponent(props, context, initializeI);
+	} = useBaseComponent(props, context, options);
 
 	const dialogSignal = ref(false);
 	const internalItem = ref(null);
@@ -41,8 +43,8 @@ export function useBaseConfirmationDialogComponent(props, context, initializeI, 
 			props.completeOk();
 	};
 	const handleError = (response, correlationId) => {
-		if (handleErrorI)
-			handleErrorI(response, correlationId);
+		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.handleErrorI))
+			options.handleErrorI(response, correlationId);
 	};
 
 	watch(() => props.signal,

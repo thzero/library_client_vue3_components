@@ -1,7 +1,7 @@
 <script>
 import { useBaseComponent } from './base';
 
-export function useBaseAboutComponent(props, context, initializeI) {
+export function useBaseAboutComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -12,7 +12,7 @@ export function useBaseAboutComponent(props, context, initializeI) {
 		noBreakingSpaces,
 		notImplementedError,
 		success
-	} = useBaseComponent(props, context, initializeI);
+	} = useBaseComponent(props, context, options);
 
 	return {
 		correlationId,

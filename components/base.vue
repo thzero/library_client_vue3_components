@@ -8,7 +8,7 @@ import Response from '@thzero/library_common/response';
 
 import NotImplementedError from '@thzero/library_common/errors/notImplemented';
 
-export function useBaseComponent(props, context, initializeI) {
+export function useBaseComponent(props, context, options) {
 	const logger = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_LOGGER);
 
 	const correlationId = () => {
@@ -24,8 +24,8 @@ export function useBaseComponent(props, context, initializeI) {
 		return Response.hasSucceeded(response);
 	};
 	const initialize = async () => {
-		if (initializeI)
-			return await initializeI();
+		if (options && LibraryUtility.isObject(options), LibraryUtility.isFunction(options.initializeI))
+			return await options.initializeI();
 		return null;
 	};
 	const noBreakingSpaces = () => {

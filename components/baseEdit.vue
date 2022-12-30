@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import { useBaseComponent } from './base';
 
-export function useBaseEditComponent(props, context, initializeI) {
+export function useBaseEditComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -14,7 +14,7 @@ export function useBaseEditComponent(props, context, initializeI) {
 		noBreakingSpaces,
 		notImplementedError,
 		success,
-	} = useBaseComponent(props, context, initializeI);
+	} = useBaseComponent(props, context, options);
 	
 	const isSaving = ref(false);
 	const serverErrors = ref([]);

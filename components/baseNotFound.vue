@@ -5,7 +5,7 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import { useBaseComponent } from './base';
 
-export function useBaseNotFoundComponent(props, context, initializeI) {
+export function useBaseNotFoundComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -16,7 +16,7 @@ export function useBaseNotFoundComponent(props, context, initializeI) {
 		noBreakingSpaces,
 		notImplementedError,
 		success
-	} = useBaseComponent(props, context, initializeI);
+	} = useBaseComponent(props, context, options);
 
 	const imageWidth = computed(() => {
 		const width = (window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);

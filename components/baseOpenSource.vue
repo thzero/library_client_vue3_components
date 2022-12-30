@@ -7,7 +7,7 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import { useBaseComponent } from './base';
 
-export function useBaseOpenSourceComponent(props, context, initializeDependenciesClient, initializeDependenciesClientFramework) {
+export function useBaseOpenSourceComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -60,14 +60,18 @@ export function useBaseOpenSourceComponent(props, context, initializeDependencie
 		dependenciesClient.value = combineDependencies(
 			await initializeDependenciesClientBase(),
 			'client');
-		dependenciesClient.value = combineDependencies(
-			dependenciesClient.value,
-			await initializeDependenciesClientFramework(),
-			'client');
-		dependenciesClient.value = combineDependencies(
-			dependenciesClient.value,
-			await initializeDependenciesClient(),
-			'client');
+		
+		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.initializeDependenciesClientFramework))
+			dependenciesClient.value = combineDependencies(
+				dependenciesClient.value,
+				await initializeDependenciesClientFramework(),
+				'client');
+
+		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.initializeDependenciesClient))
+			dependenciesClient.value = combineDependencies(
+				dependenciesClient.value,
+				await options.initializeDependenciesClient(),
+				'client');
 
 		const response = await serviceStore.dispatcher.requestOpenSource();
 		if (hasFailed(response))
@@ -89,7 +93,7 @@ export function useBaseOpenSourceComponent(props, context, initializeDependencie
 		data,
 		dependenciesClient,
 		dependenciesServer,
-		initializeDependenciesClientBase,
+		// initializeDependenciesClientBase,
 		key,
 		serviceStore
 	};

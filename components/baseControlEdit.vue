@@ -1,9 +1,11 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
+import LibraryUtility from '@thzero/library_common/utility/index';
+
 import { useBaseEditComponent } from './baseEdit';
 
-export function useBaseControlEditComponent(props, context, initializeI, convertValueI) {
+export function useBaseControlEditComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -17,14 +19,14 @@ export function useBaseControlEditComponent(props, context, initializeI, convert
 		isSaving,
 		serverErrors,
 		setErrors
-	} = useBaseEditComponent(props, context, initializeI);
+	} = useBaseEditComponent(props, context, options);
 
 	const innerValue = ref(null);
 	// const watchInner = ref(null);
 
 	const convertValue = (value) => {
-		if (convertValueI)
-			return convertValueI(value);
+		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.convertValueI))
+			return options.convertValueI(value);
 		return value;
 	};
 	const errorI = computed(() => {

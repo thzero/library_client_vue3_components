@@ -7,7 +7,7 @@ import GlobalUtility from '@thzero/library_client/utility/global';
 
 import { useBaseComponent } from './base';
 
-export function useBaseAuthComponent(props, context, initializeI) {
+export function useBaseAuthComponent(props, context, options) {
 	const {
 		correlationId,
 		error,
@@ -18,7 +18,7 @@ export function useBaseAuthComponent(props, context, initializeI) {
 		noBreakingSpaces,
 		notImplementedError,
 		success
-	} = useBaseComponent(props, context, initializeI);
+	} = useBaseComponent(props, context, options);
 
 	const serviceFeatures = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_FEATURES);
 	const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);

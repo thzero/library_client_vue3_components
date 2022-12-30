@@ -95,9 +95,9 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 
 		notify = notify !== null || notify !== undefined ? notify : true;
 		if (props.notify && notify)
-			setNotify(props.notifyMessageReset);
+			setNotify(correlationId, props.notifyMessageReset);
 	};
-	const setNotify = (message, transformed) => {
+	const setNotify = (correlationId, message, transformed) => {
 		if (String.isNullOrEmpty(message))
 			return;
 
@@ -135,7 +135,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 			context.emit('ok');
 
 			if (props.notify)
-				setNotify(props.notifyMessageSaved);
+				setNotify(correlationIdI, props.notifyMessageSaved);
 		}
 		catch (err) {
 			logger.exception('useBaseFormControlComponent', 'submit', err, correlationIdI);

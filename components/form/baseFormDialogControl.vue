@@ -98,9 +98,9 @@ export function useBaseFormDialogControlComponent(props, context, initializeI) {
 
 		notify = notify !== null || notify !== undefined ? notify : true;
 		if (props.notify && notify)
-			setNotify(props.notifyMessageReset);
+			setNotify(correlationIdI, props.notifyMessageReset);
 	};
-	const setNotify = (message, transformed) => {
+	const setNotify = (correlationId, message, transformed) => {
 		if (String.isNullOrEmpty(message))
 			return;
 
@@ -141,7 +141,7 @@ export function useBaseFormDialogControlComponent(props, context, initializeI) {
 			handleClear(correlationId);
 
 			if (props.notify)
-				setNotify(props.notifyMessageSaved);
+				setNotify(correlationIdII, props.notifyMessageSaved);
 
 			if (!String.isNullOrEmpty(response.route))
 				GlobalUtility.$navRouter.push(response.route);

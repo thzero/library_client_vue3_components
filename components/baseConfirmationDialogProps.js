@@ -1,4 +1,4 @@
-export const useBaseConfirmationDialogProps = {
+export const baseConfirmationDialogProps = {
 	completeOk: {
 		type: Function,
 		default: null

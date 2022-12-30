@@ -30,12 +30,10 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 	const dirty = ref(false);
 	const invalid = ref(true);
 	const isClearing = ref(false);
-	// const isSaving = ref(false);
 	const notifyColor = ref(null);
 	const notifyMessage = ref(null);
 	const notifySignal = ref(false);
 	const notifyTimeout = ref(3000);
-	// const serverErrors = ref([]);
 
 	const buttonOkDisabled = computed(() => {
 		if (dirty.value === false)
@@ -56,10 +54,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 		isClearing.value = true;
 		try {
 			logger.debug('useBaseFormControlComponent', 'clear', 'clear', null, correlationId);
-			// $nextTick(() => {
-			// 	// $refs.obs.reset(correlationId);
-			// });
-			await reset(correlationId(), false);
+			await reset(correlationId, false);
 		}
 		finally {
 			isClearing.value = false;
@@ -80,6 +75,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 			const response = await props.preCompleteDelete(correlationIdI);
 			logger.debug('useBaseFormControlComponent', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
 			if (hasFailed(response)) {
+				// TODO
 				// VueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationIdI);
 				return;
 			}
@@ -88,24 +84,27 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 		logger.debug('useBaseFormControlComponent', 'handleDeleteConfirmOk', 'delete', null, correlationId);
 		await handleClear(correlationId);
 	};
-	const reset = async (correlationId, value) => {
+	const reset = async (correlationId, notify, options) => {
 		if (props.resetForm)
-			props.resetForm(correlationId, value);
+			props.resetForm(correlationId, options);
 		logger.debug('useBaseFormControlComponent', 'clear', null, null, correlationId);
 		serverErrors.value = [];
 		await props.validation.$validate();
 		await props.validation.$reset();
 		isSaving.value = false;
-		// const timer = setInterval(async () => {
-		// 	clearInterval(timer);
-		// 	const el = document.getElementsByClassName('v-card__text');
-		// 	if (el && el.length > 0)
-		// 		el[0].scrollTop = 0;
-		// }, 25);
-		if (props.notify)
-			setNotify('messages.reset');
+
+		notify = notify !== null || notify !== undefined ? notify : true;
+		if (props.notify && notify)
+			setNotify(props.notifyMessageReset);
 	};
 	const setNotify = (message, transformed) => {
+		if (String.isNullOrEmpty(message))
+			return;
+
+		message = (!transformed ? GlobalUtility.$trans.t(message) : message);
+		if (String.isNullOrEmpty(message))
+			return;
+
 		notifyColor.value = null;
 		notifyMessage.value = (!transformed ? GlobalUtility.$trans.t(message) : message);
 		notifySignal.value = true;
@@ -136,7 +135,7 @@ export function useBaseFormControlComponent(props, context, initializeI) {
 			context.emit('ok');
 
 			if (props.notify)
-				setNotify('messages.saved');
+				setNotify(props.notifyMessageSaved);
 		}
 		catch (err) {
 			logger.exception('useBaseFormControlComponent', 'submit', err, correlationIdI);

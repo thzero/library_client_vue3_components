@@ -60,7 +60,7 @@ export default {
 			return instance.ctx.markup(instance.ctx.correlationId(), props.value);
 		});
 		const fullscreenInternal = computed(() => {
-			return VueUtility.fullscreen(useDisplayIy);
+			return VueUtility.fullscreen(useDisplayI);
 		});
 		const scrollableI = computed(() => {
 			return scrollable.value ? 'scrollable' : '';

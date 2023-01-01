@@ -135,7 +135,7 @@ export function useBaseFormControlComponent(props, context, options) {
 			logger.debug('useBaseFormControlComponent', 'submit', 'ok', null, correlationIdI);
 			context.emit('ok');
 
-			if (props.notify)
+			if (props.notify && !Strings.isNullOrEmpty(props.notifyMessageSaved))
 				setNotify(correlationIdI, props.notifyMessageSaved);
 		}
 		catch (err) {

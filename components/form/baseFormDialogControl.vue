@@ -140,7 +140,7 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 			context.emit('ok');
 			handleClear(correlationId);
 
-			if (props.notify)
+			if (props.notify && !Strings.isNullOrEmpty(props.notifyMessageSaved))
 				setNotify(correlationIdII, props.notifyMessageSaved);
 
 			if (!String.isNullOrEmpty(response.route))

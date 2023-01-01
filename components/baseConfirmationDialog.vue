@@ -1,12 +1,7 @@
 <script>
-// import { ref, watch } from 'vue';
-
-// import base from './base';
-// import { useBaseComponent } from './base';
 
 export default {
 	name: 'BaseConfirmationDialog',
-	// extends: base,
 	props: {
 		completeOk: {
 			type: Function,
@@ -78,39 +73,5 @@ export default {
 			// internalItem
 		};
 	}
-	// data: () => ({
-	// 	dialogSignal: false,
-	// 	internalItem: null
-	// }),
-	// watch: {
-	// 	// Handles external model changes.
-	// 	signal(value) {
-	// 		this.dialogSignal = value;
-	// 	}
-	// },
-	// methods: {
-	// 	dialogCancel() {
-	// 		this.dialogSignal = false;
-	// 		this.$emit('cancel');
-	// 	},
-	// 	async dialogOk() {
-	// 		const correlationId = this.correlationId();
-	// 		if (this.preCompleteOk) {
-	// 			const response = await this.preCompleteOk(correlationId);
-	// 			this.logger.debug('ConfirmationDialog', 'dialogOk', 'response', response, correlationId);
-	// 			if (this.hasFailed(response)) {
-	// 				this.handleError(response, correlationId);
-	// 				return;
-	// 			}
-	// 		}
-
-	// 		this.dialogSignal = false;
-	// 		this.$emit('ok');
-	// 		if (this.completeOk)
-	// 			this.completeOk();
-	// 	},
-	// 	handleError(response, correlationId) {
-	// 	}
-	// }
 };
 </script>

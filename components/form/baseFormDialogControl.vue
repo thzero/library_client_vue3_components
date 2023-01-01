@@ -140,7 +140,7 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 			context.emit('ok');
 			handleClear(correlationId);
 
-			if (props.notify)
+			if (props.notify && !Strings.isNullOrEmpty(props.notifyMessageSaved))
 				setNotify(correlationIdII, props.notifyMessageSaved);
 
 			if (!String.isNullOrEmpty(response.route))
@@ -214,122 +214,5 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 		setNotify,
 		submit
 	};
-	// data: () => ({
-	// 	dialogHeightI: 300,
-	// 	dialogDeleteConfirmSignal: new DialogSupport(),
-	// 	dialogSignal: false
-	// }),
-	// computed: {
-	// 	fullscreenInternal() {
-	// 		return this.notImplementedError();
-	// 	},
-	// 	scrollableI() {
-	// 		return this.scrollable ? 'scrollable' : '';
-	// 	},
-	// 	scrollableHeightI() {
-	// 		return this.scrollableAutoResize ? 'height: ' + (!String.isNullOrEmpty(this.scrollableHeight) ? this.scrollableHeight : this.dialogHeightI) + 'px;' : '';
-	// 	}
-	// },
-	// watch: {
-	// 	// Handles external model changes.
-	// 	signal(value) {
-	// 		const correlationId = this.correlationId();
-	// 		this.$emit(value ? 'open' : 'close');
-	// 		this.logger.debug('BaseFormDialogControl', 'signal', 'value', value, correlationId);
-	// 		this.dialogSignal = value;
-	// 		this.logger.debug('BaseFormDialogControl', 'signal', 'dialogSignal', this.dialogSignal, correlationId);
-	// 	}
-	// },
-	// mounted() {
-	// 	this.onResize();
-	// },
-	// methods: {
-	// 	handleClear() {
-	// 		const correlationId = this.correlationId();
-	// 		this.logger.debug('BaseFormDialogControl', 'clear', 'clear', null, correlationId);
-	// 		// this.$nextTick(() => {
-	// 		// 	// this.$refs.obs.reset(correlationId);
-	// 		// });
-	// 		this.reset(correlationId, false);
-	// 	},
-	// 	async handleDelete() {
-	// 		this.serverErrors = [];
-	// 		this.dialogDeleteConfirmSignal.open(this.correlationId());
-	// 	},
-	// 	async handleDeleteConfirmOk() {
-	// 		this.serverErrors = [];
-
-	// 		const correlationId = this.correlationId();
-
-	// 		this.dialogDeleteConfirmSignal.ok();
-
-	// 		if (this.preCompleteDelete) {
-	// 			const response = await this.preCompleteDelete(correlationId);
-	// 			this.logger.debug('BaseFormDialogControl', 'handleDeleteConfirmOk', 'response', response, correlationId);
-	// 			if (this.hasFailed(response)) {
-	// 				// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationId);
-	// 				return;
-	// 			}
-	// 		}
-
-	// 		this.dialogSignal = false;
-	// 		this.logger.debug('BaseFormDialogControl', 'handleDeleteConfirmOk', 'delete', null, correlationId);
-	// 		this.$emit('ok');
-	// 		this.clear(correlationId);
-	// 	},
-	// 	onResize() {
-	// 		const temp = window.innerHeight - 200;
-	// 		this.dialogHeightI = Math.ceil(temp * this.scrollableAutoResizeFactor);
-	// 	},
-	// 	async reset(correlationId, value) {
-	// 		await this.resetDialogI(correlationId, value);
-	// 		this.serverErrors = [];
-	// 		await this.validation.$validate();
-	// 	},
-	// 	async resetDialogI(correlationId, value) {
-	// 		if (this.resetDialog)
-	// 			this.resetDialog(correlationId, value);
-	// 	},
-	// 	// eslint-disable-next-line
-	// 	// async resetDialog(correlationId, value) {
-	// 	// },
-	// 	setErrors(errors) {
-	// 		// this.$refs.obs.setErrors(errors);
-	// 	},
-	// 	async submit() {
-	// 		try {
-	// 			this.serverErrors = [];
-
-	// 			const correlationId = this.correlationId();
-
-	// 			// const result = await this.$refs.obs.validate(correlationId);
-	// 			const result = await this.validation.$validate();
-	// 			this.logger.debug('BaseFormDialogControl', 'submit', 'result', result, correlationId);
-	// 			if (!result)
-	// 				return;
-
-	// 			let response = { success: true, route: null };
-	// 			if (this.preCompleteOk) {
-	// 				response = await this.preCompleteOk(correlationId);
-	// 				this.logger.debug('BaseFormDialogControl', 'submit', 'response', response, correlationId);
-	// 				if (this.hasFailed(response)) {
-	// 					// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationId);
-	// 					return;
-	// 				}
-	// 			}
-
-	// 			this.dialogSignal = false;
-	// 			this.logger.debug('BaseFormDialogControl', 'submit', 'ok', null, correlationId);
-	// 			this.$emit('ok');
-	// 			this.handleClear(correlationId);
-
-	// 			if (!String.isNullOrEmpty(response.route))
-	// 				GlobalUtility.$navRouter.push(response.route);
-	// 		}
-	// 		catch (err) {
-	// 			this._logger.exception('BaseFormDialogControl', 'submit', err, correlationId);
-	// 		}
-	// 	}
-	// }
 };
 </script>

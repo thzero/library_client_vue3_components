@@ -127,6 +127,7 @@ export function useBaseFormControlComponent(props, context, options) {
 				if (hasFailed(response)) {
 					// TODO
 					// VueUtility.handleError($refs.obs, instance.ctx.serverErrors, response, correlationIdI);
+					logger.error('useBaseFormControlComponent', 'submit', 'response', response, correlationIdI);
 					return;
 				}
 			}

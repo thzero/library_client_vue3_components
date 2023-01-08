@@ -130,7 +130,9 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 				response = await props.preCompleteOk(correlationIdI);
 				logger.debug('BaseFormDialogControl', 'submit', 'response', response, correlationIdI);
 				if (hasFailed(response)) {
-					// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationIdI); // TODO
+					 // TODO
+					// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationIdI);
+					logger.error('useBaseFormControlComponent', 'submit', 'response', response, correlationIdI);
 					return;
 				}
 			}

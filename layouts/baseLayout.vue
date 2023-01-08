@@ -1,7 +1,5 @@
 <script>
-import { computed } from 'vue';
-
-import Constants from '@/constants';
+import { ref } from 'vue';
 
 import { useBaseComponent } from '../components/base';
 
@@ -18,9 +16,7 @@ export function useBaseLayout(props, context, options) {
 		success
 	} = useBaseComponent(props, context, options);
 
-	const features = computed(() => {
-		return Constants.Features;
-	});
+	const features = ref(options ? options.features ? options.features : {} : {});
 
 	return {
 		correlationId,

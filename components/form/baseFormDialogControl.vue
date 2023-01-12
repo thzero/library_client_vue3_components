@@ -143,7 +143,7 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 			handleClear(correlationId);
 
 			if (props.notify && !String.isNullOrEmpty(props.notifyMessageSaved))
-				setNotify(correlationIdII, props.notifyMessageSaved);
+				setNotify(correlationIdI, props.notifyMessageSaved);
 
 			if (!String.isNullOrEmpty(response.route))
 				GlobalUtility.$navRouter.push(response.route);

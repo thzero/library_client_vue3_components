@@ -157,7 +157,6 @@ export function useBaseFormControlComponent(props, context, options) {
 			// console.log('v.invalid: ' + invalid.value);
 		}
 	);
-
 	watch(() => dirty.value,
 		(value) => {
 			props.dirtyCheck(correlationId(), dirty);

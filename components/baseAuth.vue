@@ -44,6 +44,11 @@ export function useBaseAuthComponent(props, context, options) {
 	// 	if (authenticated.value)
 	// 		GlobalUtility.$navRouter.push('/');
 	// });
+	(async () => {
+		authenticated.value = await serviceAuth.isAuthenticated;
+		if (authenticated.value)
+			GlobalUtility.$navRouter.push('/');
+	})();
 
 	onMounted(async () => {
 		await serviceAuth.signInCompleted();
@@ -54,11 +59,6 @@ export function useBaseAuthComponent(props, context, options) {
 		});
 	});
 
-	(async () => {
-		authenticated.value = await serviceAuth.isAuthenticated;
-		if (authenticated.value)
-			GlobalUtility.$navRouter.push('/');
-	})();
 
 	return {
 		correlationId,

@@ -156,10 +156,6 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 		}
 	};
 
-	onMounted(async () => {
-		onResize();
-	});
-
 	watch(() => props.signal,
 		(value) => {
 			const correlationIdI = correlationId();
@@ -169,7 +165,6 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 			logger.debug('BaseFormDialogControl', 'signal', 'dialogSignal', dialogSignal.value, correlationIdI);
 		}
 	);
-
 	watch(() => props.validation,
 		(value) => {
 			// console.log('v.invalid: ' + value.$invalid);
@@ -180,6 +175,10 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 			// console.log('v.invalid: ' + invalid.value);
 		}
 	);
+
+	onMounted(async () => {
+		onResize();
+	});
 
 	return {
 		correlationId,

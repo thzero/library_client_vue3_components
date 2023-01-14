@@ -55,10 +55,6 @@ export function useBaseControlEditComponent(props, context, options) {
 		context.emit('update:modelValue', value);
 	};
 
-	onMounted(async () => {
-		initValue(props.modelValue);
-	});
-
 	watch(() => props.modelValue,
 		(value) => {
 			initValue(value);
@@ -69,6 +65,10 @@ export function useBaseControlEditComponent(props, context, options) {
 			context.emit('update:modelValue', value);
 		}
 	);
+
+	onMounted(async () => {
+		initValue(props.modelValue);
+	});
 
 	return {
 		correlationId,

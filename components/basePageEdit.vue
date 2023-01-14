@@ -47,7 +47,6 @@ export function useBasePageEditComponent(props, context, options) {
 
 		next();
 	});
-	
 	onMounted(async () => {
 		window.addEventListener('beforeunload', beforeUnload);
 	});

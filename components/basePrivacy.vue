@@ -1,7 +1,7 @@
 <script>
 import { useBaseComponent } from './base';
 
-export function useBaseSupportComponent(props, context, options) {
+export function useBasePrivacyComponent(props, context, options) {
 	const {
 		correlationId,
 		error,

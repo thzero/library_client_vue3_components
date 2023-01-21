@@ -3,42 +3,45 @@ import { computed } from 'vue';
 
 import GlobalUtility from '@thzero/library_client/utility/global';
 
-import base from './base';
+import { useBaseComponent } from './base';
 
-export default {
-	name: 'BaseNotFound',
-	extends: base,
-	setup(props) {
-		const imageWidth = computed(() => {
-			const width = (window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
-			if (width > 512)
-				return '512px';
+export function useBaseNotFoundComponent(props, context, options) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success
+	} = useBaseComponent(props, context, options);
 
-			return width * 0.75 + 'px';
-		});
+	const imageWidth = computed(() => {
+		const width = (window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
+		if (width > 512)
+			return '512px';
 
-		const clickHome = () => {
-			GlobalUtility.$navRouter.push('/');
-		};
+		return width * 0.75 + 'px';
+	});
 
-		return Object.assign(base.setup(props), {
-			clickHome,
-			imageWidth
-		});
-	}
-	// computed: {
-	// 	imageWidth() {
-	// 		const width = (window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
-	// 		if (width > 512)
-	// 			return '512px';
+	const clickHome = () => {
+		GlobalUtility.$navRouter.push('/');
+	};
 
-	// 		return width * 0.75 + 'px';
-	// 	}
-	// },
-	// methods: {
-	// 	clickHome() {
-	// 		GlobalUtility.$navRouter.push('/');
-	// 	}
-	// }
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		clickHome,
+		imageWidth
+	};
 };
 </script>

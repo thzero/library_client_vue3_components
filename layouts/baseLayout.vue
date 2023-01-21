@@ -1,24 +1,34 @@
 <script>
-import { computed } from 'vue';
+import { ref } from 'vue';
 
-import Constants from '@/constants';
+import { useBaseComponent } from '../components/base';
 
-import base from '../components/base';
+export function useBaseLayout(props, context, options) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success
+	} = useBaseComponent(props, context, options);
 
-export default {
-	name: 'BaseLayout',
-	extends: base,
-	setup(props) {
-		const features = computed(() => {
-			return Constants.Features;
-		});
+	const features = ref(options ? options.features ? options.features : {} : {});
 
-		return Object.assign(base.setup(props), {
-			features
-		});
-	}
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		features
+	};
 };
 </script>
-
-<style scoped>
-</style>

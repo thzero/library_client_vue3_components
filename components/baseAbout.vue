@@ -1,12 +1,29 @@
 <script>
-import base from './base';
+import { useBaseComponent } from './base';
 
-export default {
-	name: 'BaseAbout',
-	extends: base,
-	setup(props) {
-		return Object.assign(base.setup(props), {
-		});
-	}
+export function useBaseAboutComponent(props, context, options) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success
+	} = useBaseComponent(props, context, options);
+
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success
+	};
 };
 </script>

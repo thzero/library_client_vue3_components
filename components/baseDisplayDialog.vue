@@ -1,5 +1,6 @@
 <script>
 import { computed, getCurrentInstance, ref } from 'vue';
+import { useDisplay } from 'vuetify';
 
 import VueUtility from '@thzero/library_client_vue3/utility/index';
 
@@ -46,6 +47,8 @@ export default {
 		}
 	},
 	setup (props) {
+		const useDisplayI = useDisplay();
+
 		const instance = getCurrentInstance();
 
 		const serviceMarkup = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
@@ -57,7 +60,7 @@ export default {
 			return instance.ctx.markup(instance.ctx.correlationId(), props.value);
 		});
 		const fullscreenInternal = computed(() => {
-			return VueUtility.fullscreen(instance.ctx.$vuetify);
+			return VueUtility.fullscreen(useDisplayI);
 		});
 		const scrollableI = computed(() => {
 			return scrollable.value ? 'scrollable' : '';

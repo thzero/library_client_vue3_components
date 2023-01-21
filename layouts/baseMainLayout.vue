@@ -43,6 +43,9 @@ export function useBaseMainLayout(props, context, options) {
 	const clickOpenSource = () => {
 		GlobalUtility.$navRouter.push('/openSource');
 	};
+	const clickPrivcy = () => {
+		GlobalUtility.$navRouter.push('/privacy');
+	};
 	const clickSignIn = () => {
 		GlobalUtility.$navRouter.push('/auth');
 	};
@@ -75,6 +78,7 @@ export function useBaseMainLayout(props, context, options) {
 		closeOnContentClick,
 		clickAbout,
 		clickOpenSource,
+		clickPrivcy,
 		clickSignIn,
 		clickSignOut,
 		clickSupport,

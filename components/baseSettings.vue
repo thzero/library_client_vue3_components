@@ -10,7 +10,7 @@ import Response from '@thzero/library_common/response';
 
 import { useBasePageEditComponent } from '@/library_vue/components/basePageEdit';
 
-export function useBaseSettingsComponent(props, context, options, refForm) {
+export function useBaseSettingsComponent(props, context, options) {
 	const {
 		correlationId,
 		error,

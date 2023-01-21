@@ -54,7 +54,7 @@ export function useBaseOpenSourceComponent(props, context, options) {
 		return output;
 	};
 	const key = (index, prefix, secondary) => {
-			return prefix + '' + index + '' + secondary;
+		return prefix + '' + index + '' + secondary;
 	};
 
 	onMounted(async () => {
@@ -65,7 +65,7 @@ export function useBaseOpenSourceComponent(props, context, options) {
 		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.initializeDependenciesClientFramework))
 			dependenciesClient.value = combineDependencies(
 				dependenciesClient.value,
-				await initializeDependenciesClientFramework(),
+				await options.initializeDependenciesClientFramework(),
 				'client');
 
 		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.initializeDependenciesClient))
@@ -94,7 +94,6 @@ export function useBaseOpenSourceComponent(props, context, options) {
 		data,
 		dependenciesClient,
 		dependenciesServer,
-		// initializeDependenciesClientBase,
 		key,
 		serviceStore
 	};

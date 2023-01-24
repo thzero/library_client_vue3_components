@@ -10,6 +10,7 @@ export const baseMarkdownProps = {
 	},
 	tag: {
 		type: String,
+		default: 'div',
 		validator(value) {
 			return [ 'div', 'span' ].includes(value)
 		}

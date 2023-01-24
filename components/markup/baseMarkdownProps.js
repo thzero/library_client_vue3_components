@@ -7,5 +7,11 @@ export const baseMarkdownProps = {
 	modelValue: {
 		type: String,
 		default: ''
+	},
+	tag: {
+		type: String,
+		validator(value) {
+			return [ 'div', 'span' ].includes(value)
+		}
 	}
 };

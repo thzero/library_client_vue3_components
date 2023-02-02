@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
 import { useBaseEditComponent } from './baseEdit';
 
@@ -31,14 +31,14 @@ export function useBasePageEditComponent(props, context, options) {
 		if (!dirty.value)
 			return true;
 
-		const result = window.confirm(GlobalUtility.$trans.t('questions.formDirty'));
+		const result = window.confirm(LibraryClientUtility.$trans.t('questions.formDirty'));
 		return result;
 	};
 	const beforeUnload = (event) => {
 		if (!dirty.value)
 			return;
 
-		return event.returnValue = GlobalUtility.$trans.t('questions.formDirty');
+		return event.returnValue = LibraryClientUtility.$trans.t('questions.formDirty');
 	};
 	
 	onBeforeRouteLeave(async (to, from, next) => {

@@ -1,10 +1,10 @@
 <script>
 import { computed, onMounted, ref } from 'vue';
 
-import LibraryConstants from '@thzero/library_client/constants';
+import LibraryClientConstants from '@thzero/library_client/constants';
 
-import LibraryUtility from '@thzero/library_common/utility/index';
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
+import LibraryCommonUtility from '@thzero/library_common/utility/index';
 
 import Response from '@thzero/library_common/response';
 
@@ -30,8 +30,8 @@ export function useBaseSettingsComponent(props, context, options) {
 		leaveCheck
 	} = useBasePageEditComponent(props, context, options);
 
-	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
-	const serviceUsers = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_USER);
+	const serviceStore = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_STORE);
+	const serviceUsers = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_USER);
 
 	const fab = ref(false);
 	const requestReset = ref(0);
@@ -73,10 +73,10 @@ export function useBaseSettingsComponent(props, context, options) {
 	const preCompleteI = async (correlationId, value) =>  {
 	};
 	const reset = async (correlationId, notify) => {
-		if (options && LibraryUtility.isObject(options) && options.formRef)
+		if (options && LibraryCommonUtility.isObject(options) && options.formRef)
 			await options.formRef.value.reset(correlationId, notify);
 		// setTimeout(async () => {
-		// 	if (options && LibraryUtility.isObject(options) && options.formRef)
+		// 	if (options && LibraryCommonUtility.isObject(options) && options.formRef)
 		// 		await options.formRef.value.reset(correlationId, notify);
 		// },
 		// 150);

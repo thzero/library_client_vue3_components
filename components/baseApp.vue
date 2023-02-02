@@ -1,7 +1,7 @@
 <script>
 import { onMounted } from 'vue';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
 import { useBaseComponent } from './base';
 
@@ -18,7 +18,7 @@ export function useBaseAppComponent(props, context, options) {
 		success
 	} = useBaseComponent(props, context, options);
 
-	GlobalUtility.$EventBus.on('auth-refresh', async (user) => {
+	LibraryClientUtility.$EventBus.on('auth-refresh', async (user) => {
 		const correlationIdI = correlationId();
 		logger.debug('useBaseAppComponent', 'created', 'auth-refresh', user, correlationIdI);
 		// const items = await initialize(correlationIdI);

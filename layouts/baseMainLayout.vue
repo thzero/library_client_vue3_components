@@ -1,9 +1,9 @@
 <script>
 import { computed, ref } from 'vue';
 
-import LibraryConstants from '@thzero/library_client/constants';
+import LibraryClientConstants from '@thzero/library_client/constants';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
 import { useBaseLayout } from './baseLayout';
 
@@ -23,8 +23,8 @@ export function useBaseMainLayout(props, context, options) {
 		features
 	} = useBaseLayout(props, context, options);
 
-	const serviceAuth = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_AUTH);
-	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+	const serviceAuth = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_AUTH);
+	const serviceStore = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_STORE);
 
 	const closeOnContentClick = ref(true);
 	const dialogSignOut = ref(new DialogSupport());
@@ -38,22 +38,22 @@ export function useBaseMainLayout(props, context, options) {
 	});
 
 	const clickAbout = () => {
-		GlobalUtility.$navRouter.push('/about');
+		LibraryClientUtility.$navRouter.push('/about');
 	};
 	const clickOpenSource = () => {
-		GlobalUtility.$navRouter.push('/openSource');
+		LibraryClientUtility.$navRouter.push('/openSource');
 	};
 	const clickPrivcy = () => {
-		GlobalUtility.$navRouter.push('/privacy');
+		LibraryClientUtility.$navRouter.push('/privacy');
 	};
 	const clickSignIn = () => {
-		GlobalUtility.$navRouter.push('/auth');
+		LibraryClientUtility.$navRouter.push('/auth');
 	};
 	const clickSignOut = async () => {
 		dialogSignOut.value.open();
 	};
 	const clickSupport = () => {
-		GlobalUtility.$navRouter.push('/support');
+		LibraryClientUtility.$navRouter.push('/support');
 	};
 	const dialogSignOutOk = async () => {
 		dialogSignOut.value.ok();
@@ -61,7 +61,7 @@ export function useBaseMainLayout(props, context, options) {
 	};
 	const toggleDrawer = async () => {
 		drawer.value = !drawer.value;
-		GlobalUtility.$EventBus.emit('toggle-drawer');
+		LibraryClientUtility.$EventBus.emit('toggle-drawer');
 	};
 
 	return {

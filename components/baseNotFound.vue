@@ -1,7 +1,7 @@
 <script>
 import { computed } from 'vue';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
 import { useBaseComponent } from './base';
 
@@ -27,7 +27,7 @@ export function useBaseNotFoundComponent(props, context, options) {
 	});
 
 	const clickHome = () => {
-		GlobalUtility.$navRouter.push('/');
+		LibraryClientUtility.$navRouter.push('/');
 	};
 
 	return {

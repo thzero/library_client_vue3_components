@@ -2,9 +2,9 @@
 import { computed, getCurrentInstance, ref } from 'vue';
 import { useDisplay } from 'vuetify';
 
-import VueUtility from '@thzero/library_client_vue3/utility/index';
+import LibraryClientConstants from '@thzero/library_client/constants';
 
-import LibraryConstants from '@thzero/library_client/constants';
+import LibraryClientVueUtility from '@thzero/library_client_vue3/utility/index';
 
 import base from './base';
 
@@ -51,7 +51,7 @@ export default {
 
 		const instance = getCurrentInstance();
 
-		const serviceMarkup = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
+		const serviceMarkup = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
 
 		const dialogSignal = ref(false);
 		const internalItem = ref(null);
@@ -60,7 +60,7 @@ export default {
 			return instance.ctx.markup(instance.ctx.correlationId(), props.value);
 		});
 		const fullscreenInternal = computed(() => {
-			return VueUtility.fullscreen(useDisplayI);
+			return LibraryClientVueUtility.fullscreen(useDisplayI);
 		});
 		const scrollableI = computed(() => {
 			return scrollable.value ? 'scrollable' : '';
@@ -109,7 +109,7 @@ export default {
 	// 		return this.markup(this.correlationId(), this.value);
 	// 	},
 	// 	fullscreenInternal() {
-	// 		return VueUtility.fullscreen(this.$vuetify);
+	// 		return LibraryClientVueUtility.fullscreen(this.$vuetify);
 	// 	},
 	// 	scrollableI() {
 	// 		return this.scrollable ? 'scrollable' : '';
@@ -125,7 +125,7 @@ export default {
 	// 	}
 	// },
 	// created() {
-	// 	this._serviceMarkup = Vue.prototype.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
+	// 	this._serviceMarkup = Vue.prototype.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
 	// },
 	// methods: {
 	// 	dialogCancel() {

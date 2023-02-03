@@ -2,7 +2,7 @@
 <script>
 import { ref, watch } from 'vue';
 
-import LibraryUtility from '@thzero/library_common/utility/index';
+import LibraryCommonUtility from '@thzero/library_common/utility/index';
 
 import { useBaseComponent } from './base';
 
@@ -43,7 +43,7 @@ export function useBaseConfirmationDialogComponent(props, context, options) {
 			props.completeOk();
 	};
 	const handleError = (response, correlationId) => {
-		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.handleErrorI))
+		if (options && LibraryCommonUtility.isObject(options) && LibraryCommonUtility.isFunction(options.handleErrorI))
 			options.handleErrorI(response, correlationId);
 	};
 

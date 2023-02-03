@@ -1,7 +1,7 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
 import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
 
@@ -104,12 +104,12 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 		if (String.isNullOrEmpty(message))
 			return;
 
-		message = (!transformed ? GlobalUtility.$trans.t(message) : message);
+		message = (!transformed ? LibraryClientUtility.$trans.t(message) : message);
 		if (String.isNullOrEmpty(message))
 			return;
 
 		notifyColor.value = null;
-		notifyMessage.value = (!transformed ? GlobalUtility.$trans.t(message) : message);
+		notifyMessage.value = (!transformed ? LibraryClientUtility.$trans.t(message) : message);
 		notifySignal.value = true;
 	};
 	const submit = async () => {
@@ -146,7 +146,7 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 				setNotify(correlationIdI, props.notifyMessageSaved);
 
 			if (!String.isNullOrEmpty(response.route))
-				GlobalUtility.$navRouter.push(response.route);
+				LibraryClientUtility.$navRouter.push(response.route);
 		}
 		catch (err) {
 			logger.exception('BaseFormDialogControl', 'submit', err, correlationId);

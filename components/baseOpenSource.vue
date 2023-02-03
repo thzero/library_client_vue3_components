@@ -3,8 +3,8 @@ import { onMounted, ref } from 'vue';
 
 import LibraryConstants from '@thzero/library_client/constants';
 
-import LibraryUtility from '@thzero/library_common/utility';
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
+import LibraryCommonUtility from '@thzero/library_common/utility';
 
 import { useBaseComponent } from './base';
 
@@ -21,7 +21,7 @@ export function useBaseOpenSourceComponent(props, context, options) {
 		success
 	} = useBaseComponent(props, context);
 
-	const serviceStore = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
+	const serviceStore = LibraryClientUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_STORE);
 	const data = ref('800px');
 	const dependenciesClient = ref([]);
 	const dependenciesServer = ref([]);
@@ -62,13 +62,13 @@ export function useBaseOpenSourceComponent(props, context, options) {
 			await initializeDependenciesClientBase(),
 			'client');
 		
-		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.initializeDependenciesClientFramework))
+		if (options && LibraryCommonUtility.isObject(options) && LibraryCommonUtility.isFunction(options.initializeDependenciesClientFramework))
 			dependenciesClient.value = combineDependencies(
 				dependenciesClient.value,
 				await options.initializeDependenciesClientFramework(),
 				'client');
 
-		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.initializeDependenciesClient))
+		if (options && LibraryCommonUtility.isObject(options) && LibraryCommonUtility.isFunction(options.initializeDependenciesClient))
 			dependenciesClient.value = combineDependencies(
 				dependenciesClient.value,
 				await options.initializeDependenciesClient(),

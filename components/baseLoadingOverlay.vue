@@ -1,7 +1,7 @@
 <script>
 import { computed } from 'vue';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
 import base from './base';
 
@@ -24,7 +24,7 @@ export default {
 	},
 	setup (props) {
 		const displayMessage = computed(() => {
-			return !String.isNullOrEmpty(props.message) ? props.message : GlobalUtility.$trans.t('messages.loading');
+			return !String.isNullOrEmpty(props.message) ? props.message : LibraryClientUtility.$trans.t('messages.loading');
 		});
 
 		return Object.assign(base.setup(props), {

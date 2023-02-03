@@ -1,7 +1,7 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue';
 
-import LibraryUtility from '@thzero/library_common/utility/index';
+import LibraryCommonUtility from '@thzero/library_common/utility/index';
 
 import { useBaseEditComponent } from './baseEdit';
 
@@ -25,7 +25,7 @@ export function useBaseControlEditComponent(props, context, options) {
 	// const watchInner = ref(null);
 
 	const convertValue = (value) => {
-		if (options && LibraryUtility.isObject(options) && LibraryUtility.isFunction(options.convertValueI))
+		if (options && LibraryCommonUtility.isObject(options) && LibraryCommonUtility.isFunction(options.convertValueI))
 			return options.convertValueI(value);
 		return value;
 	};

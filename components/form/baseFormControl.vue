@@ -1,8 +1,8 @@
 <script>
 import { computed, ref, watch } from 'vue';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
-import LibraryUtility from '@thzero/library_common/utility';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
+import LibraryCommonUtility from '@thzero/library_common/utility';
 
 import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
 
@@ -94,7 +94,7 @@ export function useBaseFormControlComponent(props, context, options) {
 		await props.validation.$reset();
 		isSaving.value = false;
 
-		notify = LibraryUtility.isNotNull(notify) ? notify : true;
+		notify = LibraryCommonUtility.isNotNull(notify) ? notify : true;
 		if (props.notify && notify)
 			setNotify(correlationId, props.notifyMessageReset);
 	};
@@ -102,12 +102,12 @@ export function useBaseFormControlComponent(props, context, options) {
 		if (String.isNullOrEmpty(message))
 			return;
 
-		message = (!transformed ? GlobalUtility.$trans.t(message) : message);
+		message = (!transformed ? LibraryClientUtility.$trans.t(message) : message);
 		if (String.isNullOrEmpty(message))
 			return;
 
 		notifyColor.value = null;
-		notifyMessage.value = (!transformed ? GlobalUtility.$trans.t(message) : message);
+		notifyMessage.value = (!transformed ? LibraryClientUtility.$trans.t(message) : message);
 		notifySignal.value = true;
 	};
 	const submit = async () => {

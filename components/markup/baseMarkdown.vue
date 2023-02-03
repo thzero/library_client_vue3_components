@@ -1,9 +1,9 @@
 <script>
 import { computed } from 'vue';
 
-import LibraryConstants from '@thzero/library_client/constants';
+import LibraryClientConstants from '@thzero/library_client/constants';
 
-import GlobalUtility from '@thzero/library_client/utility/global';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
 import { useBaseComponent } from '../base';
 
@@ -20,7 +20,7 @@ export function useBaseMarkdownComponent(props, context, options) {
 		success
 	} = useBaseComponent(props, context, options);
 
-	const serviceMarkup = GlobalUtility.$injector.getService(LibraryConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
+	const serviceMarkup = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
 
 	const markdownClass = computed(() => {
 		return 'markdown ' + (props.useGithub ? 'markdown-body' : '');

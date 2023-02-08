@@ -24,16 +24,18 @@ export function useBaseControlEditComponent(props, context, options) {
 	const innerValue = ref(null);
 	// const watchInner = ref(null);
 
+	const vid = options && options.vidOverride ? options.vidOverride : props.vid;
+
 	const convertValue = (value) => {
 		if (options && LibraryCommonUtility.isObject(options) && LibraryCommonUtility.isFunction(options.convertValueI))
 			return options.convertValueI(value);
 		return value;
 	};
 	const errorI = computed(() => {
-		return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors && (props.validation[props.vid].$silentErrors.length > 0) : false : true;
+		return props.validation ? props.validation[vid] ? props.validation[vid].$silentErrors && (props.validation[vid].$silentErrors.length > 0) : false : true;
 	});
 	const errorsI = computed(() => {
-		return props.validation ? props.validation[props.vid] ? props.validation[props.vid].$silentErrors : [] : [];
+		return props.validation ? props.validation[vid] ? props.validation[vid].$silentErrors : [] : [];
 	});
 	const hideDetails = computed(() => {
 		return (!errorsI || (errorsI && errorsI.length === 0));

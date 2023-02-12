@@ -1,146 +1,85 @@
 <script>
-import { computed, getCurrentInstance, ref } from 'vue';
-import { useDisplay } from 'vuetify';
+import { computed, ref, watch } from 'vue';
 
 import LibraryClientConstants from '@thzero/library_client/constants';
 
-import VueUtility from '@thzero/library_client_vue3/utility/index';
+import LibraryClientUtility from '@thzero/library_client/utility/index';
 
-import base from './base';
+import { useBaseComponent } from './base';
 
-export default {
-	name: 'BaseDisplayDialog',
-	extends: base,
-	props: {
-		// must be included in props
-		value: {
-			type: null,
-			default: null
-		},
-		label: {
-			type: String,
-			default: ''
-		},
-		maxWidth: {
-			type: String,
-			default: '600px'
-		},
-		scrollable: {
-			type: Boolean,
-			default: true
-		},
-		scrollableAutoResize: {
-			type: Boolean,
-			default: false
-		},
-		scrollableAutoResizeFactor: {
-			type: Number,
-			default: 0.5
-		},
-		scrollableHeight: {
-			type: String,
-			default: null
-		},
-		signal: {
-			type: Boolean,
-			default: false
-		}
-	},
-	setup (props) {
-		const useDisplayI = useDisplay();
+export function useDisplayDialogBaseComponent(props, context, options) {
+	const {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors
+	} = useBaseComponent(props, context, options);
 
-		const instance = getCurrentInstance();
+	const serviceMarkup = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
 
-		const serviceMarkup = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
+	const dialogSignal = ref(false);
+	const internalItem = ref(null);
 
-		const dialogSignal = ref(false);
-		const internalItem = ref(null);
+	const fullscreenInternal = computed(() => {
+		return options.fullscreenInternal ? options.fullscreenInternal : false;
+	});
+	const markup = computed(() => {
+		if (!props.markup)
+			return null;
+		return serviceMarkup.trimResults(correlationId(), serviceMarkup.render(correlationId, props.markup));
+	});
+	const scrollableI = computed(() => {
+		return props.scrollable ? 'scrollable' : '';
+	});
+	const scrollableHeightI = computed(() => {
+		return props.scrollableAutoResize ? 'height: ' + (!String.isNullOrEmpty(props.scrollableHeight) ? props.scrollableHeight : dialogHeightI.value) + 'px;' : '';
+	});
 
-		const description = computed(() => {
-			return instance.ctx.markup(instance.ctx.correlationId(), props.value);
-		});
-		const fullscreenInternal = computed(() => {
-			return VueUtility.fullscreen(useDisplayI);
-		});
-		const scrollableI = computed(() => {
-			return scrollable.value ? 'scrollable' : '';
-		});
-		const scrollableHeightI = computed(() => {
-			return scrollableAutoResize.value ? 'height: ' + (!String.isNullOrEmpty(scrollableHeight.value) ? scrollableHeight.value : dialogHeightI.value) + 'px;' : '';
-		});
+	const dialogCancel = () => {
+		dialogSignal.value = false;
+		context.$emit('cancel');
+	};
+	const dialogOk = async () => {
+		dialogSignal.value = false;
+		context.$emit('ok');
+	};
 
-		const dialogCancel = () => {
-			dialogSignal.value = false;
-			instance.ctx.$emit('cancel');
-		};
-		const dialogOk = async () => {
-			dialogSignal.value = false;
-			instance.ctx.$emit('ok');
-		};
-		const markup = (correlationId, value) => {
-			if (!value)
-				return null;
-			return instance.ctx.serviceMarkup.trimResults(correlationId, instance.ctx.serviceMarkup.render(correlationId, value));
-		};
-
-		watch(signal, async (value) => {
+	watch(() => props.signal,
+		(value) => {
 			dialogSignal.value = value;
-		});
+		}
+	);
 
-		return Object.assign(base.setup(props), {
-			description,
-			dialogCancel,
-			dialogOk,
-			dialogSignal,
-			fullscreenInternal,
-			internalItem,
-			markup,
-			serviceMarkup,
-			scrollableI,
-			scrollableHeightI
-		});
-	},
-	// data: () => ({
-	// 	dialogSignal: false,
-	// 	internalItem: null
-	// }),
-	// computed: {
-	// 	description() {
-	// 		return this.markup(this.correlationId(), this.value);
-	// 	},
-	// 	fullscreenInternal() {
-	// 		return VueUtility.fullscreen(this.$vuetify);
-	// 	},
-	// 	scrollableI() {
-	// 		return this.scrollable ? 'scrollable' : '';
-	// 	},
-	// 	scrollableHeightI() {
-	// 		return this.scrollableAutoResize ? 'height: ' + (!String.isNullOrEmpty(this.scrollableHeight) ? this.scrollableHeight : this.dialogHeightI) + 'px;' : '';
-	// 	}
-	// },
-	// watch: {
-	// 	// Handles external model changes.
-	// 	signal(value) {
-	// 		this.dialogSignal = value;
-	// 	}
-	// },
-	// created() {
-	// 	this._serviceMarkup = Vue.prototype.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_MARKUP_PARSER);
-	// },
-	// methods: {
-	// 	dialogCancel() {
-	// 		this.dialogSignal = false;
-	// 		this.$emit('cancel');
-	// 	},
-	// 	async dialogOk() {
-	// 		this.dialogSignal = false;
-	// 		this.$emit('ok');
-	// 	},
-	// 	markup(correlationId, value) {
-	// 		if (!value)
-	// 			return null;
-	// 		return this._serviceMarkup.trimResults(correlationId, this._serviceMarkup.render(correlationId, value));
-	// 	}
-	// }
+	return {
+		correlationId,
+		error,
+		hasFailed,
+		hasSucceeded,
+		initialize,
+		logger,
+		noBreakingSpaces,
+		notImplementedError,
+		success,
+		isSaving,
+		serverErrors,
+		setErrors,
+		dialogCancel,
+		dialogOk,
+		dialogSignal,
+		fullscreenInternal,
+		markup,
+		internalItem,
+		serviceMarkup,
+		scrollableI,
+		scrollableHeightI
+	};
 };
 </script>

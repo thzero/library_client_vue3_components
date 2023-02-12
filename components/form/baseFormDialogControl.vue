@@ -2,6 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue';
 
 import LibraryClientUtility from '@thzero/library_client/utility/index';
+// import LibraryClientVueUtility from '@thzero/library_client_vue/utility/index';
+import LibraryCommonUtility from '@thzero/library_common/utility';
 
 import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
 
@@ -48,7 +50,7 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 
 	const handleClear = () => {
 		const correlationIdI = correlationId();
-		logger.debug('baseFormDialogControl', 'clear', 'clear', null, correlationIdI);
+		logger.debug('useBaseFormDialogControlComponent', 'clear', 'clear', null, correlationIdI);
 		reset(correlationIdI, false);
 	};
 	const handleClose = () => {
@@ -56,7 +58,7 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 		serverErrors.value = [];
 		dialogSignal.value = false;
 		reset(correlationIdI);
-		logger.debug('baseFormDialogControl', 'cancel', 'cancel', null, correlationIdI);
+		logger.debug('useBaseFormDialogControlComponent', 'cancel', 'cancel', null, correlationIdI);
 		context.emit('close');
 	};
 	const handleDelete = async () => {
@@ -72,15 +74,22 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 
 		if (props.preCompleteDelete) {
 			const response = await props.preCompleteDelete(correlationIdI);
-			logger.debug('baseFormDialogControl', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
+			logger.debug('useBaseFormDialogControlComponent', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
 			if (hasFailed(response)) {
+				logger.error('useBaseFormDialogControlComponent', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
 				// TODO
+				// LibraryClientVueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationIdI);
+				
+				const notify = LibraryCommonUtility.isNotNull(notify) ? notify : true;
+				if (props.notify && notify)
+					setNotify(correlationId, props.notifyMessageError);
+
 				return;
 			}
 		}
 
 		dialogSignal.value = false;
-		logger.debug('BaseFormDialogControl', 'handleDeleteConfirmOk', 'delete', null, correlationIdI);
+		logger.debug('useBaseFormDialogControlComponent', 'handleDeleteConfirmOk', 'delete', null, correlationIdI);
 		context.emit('ok');
 		clear(correlationIdI);
 	};
@@ -121,24 +130,29 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 
 			const result = await props.validation.$validate();
 			await props.validation.$reset();
-			logger.debug('BaseFormDialogControl', 'submit', 'result', result, correlationIdI);
+			logger.debug('useBaseFormDialogControlComponent', 'submit', 'result', result, correlationIdI);
 			if (!result)
 				return;
 
 			let response = { success: true, route: null };
 			if (props.preCompleteOk) {
 				response = await props.preCompleteOk(correlationIdI);
-				logger.debug('BaseFormDialogControl', 'submit', 'response', response, correlationIdI);
+				logger.debug('useBaseFormDialogControlComponent', 'submit', 'response', response, correlationIdI);
 				if (hasFailed(response)) {
-					 // TODO
-					// VueUtility.handleError(this.$refs.obs, this.serverErrors, response, correlationIdI);
-					logger.error('useBaseFormControlComponent', 'submit', 'response', response, correlationIdI);
+					logger.error('useBaseFormDialogControlComponent', 'submit', 'response', response, correlationIdI);
+					// TODO
+					// LibraryClientVueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationIdI);
+					
+					const notify = LibraryCommonUtility.isNotNull(notify) ? notify : true;
+					if (props.notify && notify)
+						setNotify(correlationId, props.notifyMessageError);
+
 					return;
 				}
 			}
 
 			dialogSignal.value = false;
-			logger.debug('BaseFormDialogControl', 'submit', 'ok', null, correlationId);
+			logger.debug('useBaseFormDialogControlComponent', 'submit', 'ok', null, correlationId);
 			context.emit('ok');
 			handleClear(correlationId);
 
@@ -149,7 +163,7 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 				LibraryClientUtility.$navRouter.push(response.route);
 		}
 		catch (err) {
-			logger.exception('BaseFormDialogControl', 'submit', err, correlationId);
+			logger.exception('useBaseFormDialogControlComponent', 'submit', err, correlationId);
 		}
 		finally {
 			loading.value = false;
@@ -160,9 +174,9 @@ export function useBaseFormDialogControlComponent(props, context, options) {
 		(value) => {
 			const correlationIdI = correlationId();
 			context.emit(value ? 'open' : 'close');
-			logger.debug('BaseFormDialogControl', 'signal', 'value', value, correlationIdI);
+			logger.debug('useBaseFormDialogControlComponent', 'signal', 'value', value, correlationIdI);
 			dialogSignal.value = value;
-			logger.debug('BaseFormDialogControl', 'signal', 'dialogSignal', dialogSignal.value, correlationIdI);
+			logger.debug('useBaseFormDialogControlComponent', 'signal', 'dialogSignal', dialogSignal.value, correlationIdI);
 		}
 	);
 	watch(() => props.validation,

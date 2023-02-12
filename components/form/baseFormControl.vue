@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue';
 
 import LibraryClientUtility from '@thzero/library_client/utility/index';
+// import LibraryClientVueUtility from '@thzero/library_client_vue/utility/index';
 import LibraryCommonUtility from '@thzero/library_common/utility';
 
 import { useBaseEditComponent } from '@/library_vue/components/baseEdit';
@@ -76,8 +77,14 @@ export function useBaseFormControlComponent(props, context, options) {
 			const response = await props.preCompleteDelete(correlationIdI);
 			logger.debug('useBaseFormControlComponent', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
 			if (hasFailed(response)) {
+				logger.error('useBaseFormControlComponent', 'handleDeleteConfirmOk', 'response', response, correlationIdI);
 				// TODO
-				// VueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationIdI);
+				// LibraryClientVueUtility.handleError(this.$refs.obs, this.serverErrors.value, response, correlationIdI);
+				
+				const notify = LibraryCommonUtility.isNotNull(notify) ? notify : true;
+				if (props.notify && notify)
+					setNotify(correlationId, props.notifyMessageError);
+
 				return;
 			}
 		}
@@ -125,9 +132,15 @@ export function useBaseFormControlComponent(props, context, options) {
 				const response = await props.preCompleteOk(correlationIdI);
 				logger.debug('useBaseFormControlComponent', 'submit', 'response', response, correlationIdI);
 				if (hasFailed(response)) {
-					// TODO
-					// VueUtility.handleError($refs.obs, instance.ctx.serverErrors, response, correlationIdI);
 					logger.error('useBaseFormControlComponent', 'submit', 'response', response, correlationIdI);
+
+					// TODO
+					// LibraryClientVueUtility.handleError($refs.obs, instance.ctx.serverErrors, response, correlationIdI);
+				
+					const notify = LibraryCommonUtility.isNotNull(notify) ? notify : true;
+					if (props.notify && notify)
+						setNotify(correlationId, props.notifyMessageError);
+
 					return;
 				}
 			}

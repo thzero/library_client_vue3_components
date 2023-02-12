@@ -31,6 +31,10 @@ export const baseFormDialogControlProps = {
 		type: Boolean,
 		default: true
 	},
+	notifyMessageError: {
+		type: String,
+		default: 'messages.error'
+	},
 	notifyMessageReset: {
 		type: String,
 		default: 'messages.reset'

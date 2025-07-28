@@ -1,5 +1,5 @@
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import LibraryClientConstants from '@thzero/library_client/constants';
 
@@ -8,7 +8,7 @@ import LibraryCommonUtility from '@thzero/library_common/utility/index';
 
 import Response from '@thzero/library_common/response';
 
-import { useBasePageEditComponent } from '@/library_vue/components/basePageEdit';
+import { useBasePageEditComponent } from '@thzero/library_client_vue3/components/basePageEdit';
 
 export function useBaseSettingsComponent(props, context, options) {
 	const {
@@ -21,6 +21,7 @@ export function useBaseSettingsComponent(props, context, options) {
 		noBreakingSpaces,
 		notImplementedError,
 		success,
+		successResponse,
 		isSaving,
 		serverErrors,
 		setErrors,
@@ -33,8 +34,12 @@ export function useBaseSettingsComponent(props, context, options) {
 	const serviceStore = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_STORE);
 	const serviceUsers = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_USER);
 
+	const gamerTag = ref('');
+	const gamerTagDisplay = ref('');
 	const fab = ref(false);
 	const requestReset = ref(0);
+
+	let gamerTagDisplayWatcher = null;
 
 	const hasPicture = computed(() => {
 		return (serviceStore.user != null && serviceStore.user.external != null && !String.isNullOrEmpty(serviceStore.user.external.picture));
@@ -48,7 +53,7 @@ export function useBaseSettingsComponent(props, context, options) {
 	const user = computed(() => {
 		return serviceStore.user;
 	});
-	
+
 	const cancel = async () => {
 		await reset(correlationId(), true);
 	};
@@ -72,19 +77,49 @@ export function useBaseSettingsComponent(props, context, options) {
 	// eslint-disable-next-line
 	const preCompleteI = async (correlationId, value) =>  {
 	};
-	const reset = async (correlationId, notify) => {
-		if (options && LibraryCommonUtility.isObject(options) && options.formRef)
-			await options.formRef.value.reset(correlationId, notify);
-		// setTimeout(async () => {
-		// 	if (options && LibraryCommonUtility.isObject(options) && options.formRef)
-		// 		await options.formRef.value.reset(correlationId, notify);
-		// },
-		// 150);
+	const preCompleteOkI = async (correlationId, value) =>  {
+		const settings = serviceStore.getters.user.getUserSettings();
+		settings.gamerTag = gamerTag.value;
+		settings.gamerTagDisplay = gamerTagDisplay.value;
+		return settings;
 	};
-	// eslint-disable-next-line
+	const resetAdditionalI = (correlationId) =>  {
+		try {
+			if (gamerTagDisplayWatcher)
+				gamerTagDisplayWatcher();
+			gamerTagDisplayWatcher = null;
+
+			const settings = serviceStore.getters.user.getUserSettings();
+			// load display first, so watch doesn't overwrite it...
+			gamerTagDisplay.value = !String.isNullOrEmpty(settings.gamerTagDisplay) ? settings.gamerTagDisplay : '';
+			gamerTag.value = !String.isNullOrEmpty(settings.gamerTag) ? settings.gamerTag : '';
+			if (String.isNullOrEmpty(settings.gamerTag))
+				gamerTagDisplay.value = '';
+
+			return settings;
+		}
+		finally {
+			gamerTagDisplayWatcher = watch(() => gamerTagDisplay.value,
+				(value, prev) => {
+					gamerTag.value = toGamerTag(gamerTagDisplay.value);
+				}
+			);
+		}
+	};
+	const toGamerTag = (tag) => {
+		if (!tag)
+			return;
+
+		//  '"_\-=\.,a-zA-Z0-9 
+		tag = tag.replace(' ', '_').replace("'", '-').replace('"', '-').replace('=', '-').replace(',','_');
+		if (options.toGamerTagAdditional)
+			tag = options.toGamerTagAdditional(tag);
+		return tag;
+	};
 
 	onMounted(async () => {
-		await reset(correlationId(), false);
+		if (options && LibraryCommonUtility.isObject(options) && options.formRef && options.formRef.value)
+			await options.formRef.value.reset(correlationId, false);
 	});
 
 	return {
@@ -97,6 +132,7 @@ export function useBaseSettingsComponent(props, context, options) {
 		noBreakingSpaces,
 		notImplementedError,
 		success,
+		successResponse,
 		isSaving,
 		serverErrors,
 		setErrors,
@@ -106,6 +142,8 @@ export function useBaseSettingsComponent(props, context, options) {
 		leaveCheck,
 		cancel,
 		close,
+		gamerTag,
+		gamerTagDisplay,
 		fab,
 		hasPicture,
 		name,
@@ -114,8 +152,9 @@ export function useBaseSettingsComponent(props, context, options) {
 		picture,
 		preComplete,
 		preCompleteI,
+		preCompleteOkI,
+		resetAdditionalI,
 		requestReset,
-		reset,
 		serviceStore,
 		serviceUsers,
 		user
